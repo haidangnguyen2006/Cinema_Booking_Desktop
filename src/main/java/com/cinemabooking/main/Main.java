@@ -1,5 +1,6 @@
 package com.cinemabooking.main;
 
+import com.cinemabooking.service.TMDBApiService;
 import com.cinemabooking.utils.DatabaseConnection;
 import com.cinemabooking.view.LoginFrame;
 import com.formdev.flatlaf.FlatLightLaf;
@@ -15,6 +16,16 @@ public class Main {
         }
         // Test connection
         DatabaseConnection.getConnection();
+        new Thread(() -> {
+            try {
+                System.out.println("Bắt đầu gọi API kéo phim từ TMDB...");
+                TMDBApiService apiService = new TMDBApiService();
+                apiService.fetchAndSaveNowPlayingMovies();
+            } catch (Exception e) {
+                System.err.println("Lỗi khi đồng bộ phim: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }).start();
 
         javax.swing.SwingUtilities.invokeLater(() -> {
             new LoginFrame().setVisible(true);

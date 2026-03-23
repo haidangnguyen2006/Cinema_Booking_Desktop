@@ -4,6 +4,8 @@ import com.cinemabooking.model.Movie;
 import com.cinemabooking.utils.DatabaseConnection;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MovieDAO {
     public boolean isMovieExist(int tmdbId) throws SQLException {
@@ -40,5 +42,32 @@ public class MovieDAO {
 
             return stmt.executeUpdate() > 0;
         }
+    }
+    public List<Movie> getAllMovies() throws SQLException {
+        List<Movie> movies = new ArrayList<>();
+        String sql = "SELECT * FROM Movies";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Movie movie = new Movie();
+                movie.setMovieId(rs.getInt("MovieID"));
+                movie.setTmdbId(rs.getInt("TMDB_ID"));
+                movie.setTitle(rs.getString("Title"));
+                Date sqlDate = rs.getDate("ReleaseDate");
+                if (sqlDate != null) {
+                    movie.setReleaseDate(new java.util.Date(sqlDate.getTime()));
+                }
+                movie.setDuration(rs.getInt("Duration"));
+                movie.setPosterUrl(rs.getString("PosterURL"));
+                movie.setGenre(rs.getString("Genre"));
+                movie.setRating(rs.getDouble("Rating"));
+
+                movies.add(movie);
+            }
+        }
+        return movies;
     }
 }
