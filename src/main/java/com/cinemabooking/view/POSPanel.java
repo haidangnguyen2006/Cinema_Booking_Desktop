@@ -1,11 +1,18 @@
 package com.cinemabooking.view;
 
 import com.cinemabooking.dao.MovieDAO;
+import com.cinemabooking.model.Customer;
 import com.cinemabooking.model.Movie;
 import com.cinemabooking.model.Seat;
 import com.cinemabooking.model.ShowTime;
+import com.cinemabooking.service.BookingService;
+import com.cinemabooking.service.CustomerService;
 import com.cinemabooking.service.ShowTimeService;
 
+import java.awt.event.ActionEvent;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +31,18 @@ public class POSPanel extends JPanel {
     private JLabel lblBillMovie;
     private JLabel lblBillSeat;
     private JLabel lblBillTotal;
+    private JTextField txtPhone;
 
     private List<Seat> selectedSeats = new ArrayList<>();
     private ShowTime currentShowTime;
+    private LocalDate selectedDate = LocalDate.now();
+    private JPanel listContainer;
+    private Customer currentCustomer = null;
+    private CustomerService customerService = new CustomerService();
 
-    private final ShowTimeService showTimeService = new com.cinemabooking.service.ShowTimeService();
+    private final ShowTimeService showTimeService = new ShowTimeService();
+    private final BookingService bookingService = new BookingService();
+
 
     public POSPanel() {
         setLayout(new BorderLayout(20, 20));
@@ -45,36 +59,97 @@ public class POSPanel extends JPanel {
     // 1. CỘT TRÁI: CHỌN PHIM VÀ SUẤT CHIẾU
     // =========================================
     private JPanel createLeftPanel() {
-        JPanel leftPanel = new JPanel(new BorderLayout());
-        leftPanel.setPreferredSize(new Dimension(350, 0)); // Tăng độ rộng để chứa ảnh và nút
+        JPanel leftPanel = new JPanel(new BorderLayout(0, 10));
+        leftPanel.setPreferredSize(new Dimension(350, 0));
         leftPanel.setBackground(Color.WHITE);
         leftPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(220, 220, 220)),
                 new EmptyBorder(10, 10, 10, 10)
         ));
 
-        JLabel lblTitle = new JLabel("Lịch chiếu hôm nay");
-        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        leftPanel.add(lblTitle, BorderLayout.NORTH);
+        // --- HEADER CHỨA TIÊU ĐỀ VÀ THANH CHỌN NGÀY ---
+        JPanel headerPanel = new JPanel(new BorderLayout(0, 10));
+        headerPanel.setBackground(Color.WHITE);
 
-        // Container chứa danh sách các phim (Dùng BoxLayout xếp dọc)
-        JPanel listContainer = new JPanel();
+        JLabel lblTitle = new JLabel("Lịch chiếu");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        headerPanel.add(lblTitle, BorderLayout.NORTH);
+
+        JPanel datePanel = new JPanel();
+        datePanel.setLayout(new BoxLayout(datePanel, BoxLayout.X_AXIS));
+        datePanel.setBackground(Color.WHITE);
+        ButtonGroup dateGroup = new ButtonGroup();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
+
+        for (int i = 0; i < 5; i++) {
+            java.time.LocalDate loopDate = java.time.LocalDate.now().plusDays(i);
+            String text = (i == 0) ? "Hôm nay" : loopDate.format(formatter);
+
+            JToggleButton btnDate = new JToggleButton(text);
+            btnDate.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            btnDate.setBackground(new Color(245, 246, 250));
+            btnDate.setFocusPainted(false);
+            btnDate.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btnDate.setMaximumSize(new Dimension(85, 35));
+            if (i == 0) {
+                btnDate.setSelected(true);
+                btnDate.setBackground(COLOR_PRIMARY_YELLOW);
+            }
+
+            // Gắn sự kiện khi click chuyển ngày
+            btnDate.addActionListener(e -> {
+                java.util.Enumeration<AbstractButton> elements = dateGroup.getElements();
+                while (elements.hasMoreElements()) {
+                    elements.nextElement().setBackground(new Color(245, 246, 250));
+                }
+                btnDate.setBackground(COLOR_PRIMARY_YELLOW);
+
+                selectedDate = loopDate;
+                loadMoviesList();
+            });
+
+            dateGroup.add(btnDate);
+            datePanel.add(btnDate);
+            datePanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        }
+
+        JScrollPane dateScroll = new JScrollPane(datePanel);
+        dateScroll.setBorder(null);
+        dateScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        dateScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        dateScroll.setPreferredSize(new Dimension(0, 55));
+        headerPanel.add(dateScroll, BorderLayout.CENTER);
+
+        leftPanel.add(headerPanel, BorderLayout.NORTH);
+
+        // --- CONTAINER CHỨA DANH SÁCH PHIM ---
+        listContainer = new JPanel();
         listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
         listContainer.setBackground(Color.WHITE);
 
-        // Bọc vào ScrollPane
         JScrollPane scrollPane = new JScrollPane(listContainer);
-        scrollPane.setBorder(null); // Xóa viền cho đẹp
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Cuộn mượt hơn
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         leftPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Dòng trạng thái Loading
+        // Gọi lần đầu để tải danh sách phim của "Hôm nay"
+        loadMoviesList();
+
+        return leftPanel;
+    }
+
+    // =========================================
+    // HÀM TẢI LẠI DANH SÁCH PHIM
+    // =========================================
+    private void loadMoviesList() {
+        listContainer.removeAll();
         JLabel lblLoading = new JLabel("Đang tải dữ liệu...", SwingConstants.CENTER);
         lblLoading.setFont(new Font("Segoe UI", Font.ITALIC, 14));
         listContainer.add(lblLoading);
+        listContainer.revalidate();
+        listContainer.repaint();
 
-        // Load dữ liệu ngầm bằng SwingWorker
-        SwingWorker<List<Movie>, Void> worker = new SwingWorker<>() {
+        new SwingWorker<List<Movie>, Void>() {
             @Override
             protected List<Movie> doInBackground() throws Exception {
                 MovieDAO movieDAO = new MovieDAO();
@@ -85,32 +160,23 @@ public class POSPanel extends JPanel {
             protected void done() {
                 try {
                     List<Movie> movies = get();
-                    listContainer.removeAll(); // Xóa chữ loading
+                    listContainer.removeAll();
 
                     if (movies.isEmpty()) {
-                        listContainer.add(new JLabel("Chưa có phim nào."));
+                        listContainer.add(new JLabel("Chưa có phim nào trong hệ thống."));
                     } else {
-                        // Tạo các khung gập mở (Accordion) cho từng phim
                         for (Movie m : movies) {
                             listContainer.add(new MovieAccordionItem(m));
-                            listContainer.add(Box.createRigidArea(new Dimension(0, 10))); // Khoảng cách giữa các phim
+                            listContainer.add(Box.createRigidArea(new Dimension(0, 10)));
                         }
                     }
-
-                    // Cập nhật lại giao diện sau khi add component
                     listContainer.revalidate();
                     listContainer.repaint();
-
                 } catch (Exception e) {
-                    listContainer.removeAll();
-                    listContainer.add(new JLabel("Lỗi tải danh sách phim!"));
                     e.printStackTrace();
                 }
             }
-        };
-        worker.execute();
-
-        return leftPanel;
+        }.execute();
     }
 
     // =========================================
@@ -135,7 +201,7 @@ public class POSPanel extends JPanel {
             JLabel lblTitle = new JLabel(movie.getTitle());
             lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 15));
 
-            lblIcon = new JLabel("▼"); // Icon chỉ thị trạng thái gập/mở
+            lblIcon = new JLabel("▼");
             lblIcon.setFont(new Font("Segoe UI", Font.PLAIN, 12));
             lblIcon.setForeground(Color.GRAY);
 
@@ -187,7 +253,8 @@ public class POSPanel extends JPanel {
             new SwingWorker<List<ShowTime>, Void>() {
                 @Override
                 protected List<ShowTime> doInBackground() throws Exception {
-                    return showTimeService.getShowTimesForMovie(movie.getMovieId());
+                    Date sqlDate = Date.valueOf(selectedDate);
+                    return showTimeService.getShowTimesByMovieAndDate(movie.getMovieId(), sqlDate);
                 }
 
                 @Override
@@ -203,7 +270,7 @@ public class POSPanel extends JPanel {
                             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm");
 
                             for (ShowTime st : showTimes) {
-                                // Format thời gian từ DB (vd: 18:00:00 -> 18:00)
+                                // Format thời gian từ DB 18:00:00 -> 18:00
                                 String timeStr = sdf.format(st.getStartTime());
                                 JToggleButton btnTime = new JToggleButton(timeStr);
                                 btnTime.setFont(new Font("Segoe UI", Font.BOLD, 13));
@@ -364,7 +431,7 @@ public class POSPanel extends JPanel {
         customerPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
         customerPanel.setOpaque(false);
         customerPanel.setBorder(new TitledBorder("Khách hàng thành viên"));
-        JTextField txtPhone = new JTextField();
+        txtPhone = new JTextField();
         txtPhone.putClientProperty("JTextField.placeholderText", "Nhập SĐT khách...");
         JButton btnCheck = new JButton("Kiểm tra");
         customerPanel.add(txtPhone, BorderLayout.CENTER);
@@ -386,12 +453,47 @@ public class POSPanel extends JPanel {
         btnCheckout.setBackground(COLOR_PRIMARY_YELLOW);
         btnCheckout.setPreferredSize(new Dimension(0, 50));
         btnCheckout.setFocusPainted(false);
-
+        btnCheckout.addActionListener(e -> processPayment());
+        rightPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F5"), "checkout");
+        rightPanel.getActionMap().put("checkout", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                processPayment();
+            }
+        });
         checkoutPanel.add(lblBillTotal, BorderLayout.NORTH);
         checkoutPanel.add(btnCheckout, BorderLayout.CENTER);
 
         rightPanel.add(checkoutPanel, BorderLayout.SOUTH);
-
+        btnCheck.addActionListener(e -> {
+            String phone = txtPhone.getText().trim();
+            if (phone.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập số điện thoại!");
+                return;
+            }
+            try {
+                // LƯU KHÁCH HÀNG VÀO BIẾN TOÀN CỤC NẾU TÌM THẤY
+                currentCustomer = customerService.findCustomerByPhone(phone);
+                if (currentCustomer != null) {
+                    JOptionPane.showMessageDialog(this, "Khách hàng: " + currentCustomer.getFullName() + "\nĐiểm hiện tại: " + currentCustomer.getPoints());
+                } else {
+                    int choice = JOptionPane.showConfirmDialog(this, "Khách chưa là thành viên. Bạn có muốn đăng ký mới?", "Đăng ký", JOptionPane.YES_NO_OPTION);
+                    if (choice == JOptionPane.YES_OPTION) {
+                        String name = JOptionPane.showInputDialog(this, "Nhập họ tên khách hàng:");
+                        if (name != null && !name.trim().isEmpty()) {
+                            customerService.registerNewCustomer(phone, name);
+                            currentCustomer = customerService.findCustomerByPhone(phone);
+                            JOptionPane.showMessageDialog(this, "Đăng ký thành công!");
+                        }
+                    } else {
+                        txtPhone.setText("");
+                        currentCustomer = null;
+                    }
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi kiểm tra khách hàng: " + ex.getMessage());
+            }
+        });
         return rightPanel;
     }
     public void updateSeatMatrixForShowtime(Movie movie, ShowTime showTime) {
@@ -484,6 +586,52 @@ public class POSPanel extends JPanel {
 
             double total = selectedSeats.size() * currentShowTime.getTicketPrice();
             lblBillTotal.setText(String.format("Tổng tiền: %,.0f VNĐ", total));
+        }
+    }
+    private void processPayment() {
+        if (selectedSeats.isEmpty() || currentShowTime == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn ít nhất 1 ghế để thanh toán!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String phoneInput = txtPhone.getText().trim();
+        if (!phoneInput.isEmpty() && currentCustomer == null) {
+            try {
+                currentCustomer = customerService.findCustomerByPhone(phoneInput);
+            } catch (Exception ex) {
+            }
+        }
+        double totalAmount = selectedSeats.size() * currentShowTime.getTicketPrice();
+        double discount = (currentCustomer != null && currentCustomer.getPoints() >= 200) ? 20000 : 0;
+        double finalAmount = totalAmount - discount;
+
+        String msg = String.format("CHI TIẾT THANH TOÁN\n------------------------\nSố lượng vé: %d\nTổng tiền: %,.0f VNĐ\nGiảm giá (Điểm): %,.0f VNĐ\n------------------------\nTHỰC THU: %,.0f VNĐ",
+                selectedSeats.size(), totalAmount, discount, finalAmount);
+
+        int confirm = JOptionPane.showConfirmDialog(this, msg, "Xác nhận thanh toán", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                boolean success = bookingService.processPayment(currentShowTime, selectedSeats, currentCustomer);
+
+                if (success) {
+                    String movieName = lblBillMovie.getText().replaceAll("\\s*\\(.*\\)", "").replace("Phim: ", "");
+
+                    Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
+
+                    TicketDialog ticketDialog = new TicketDialog(parentFrame, movieName, currentShowTime, selectedSeats, currentCustomer, totalAmount, discount, finalAmount);
+                    ticketDialog.setVisible(true);
+                    txtPhone.setText("");
+                    currentCustomer = null;
+
+                    Movie tempMovie = new Movie();
+                    tempMovie.setTitle(lblBillMovie.getText().replaceAll("\\s*\\(.*\\)", "").replace("Phim: ", ""));
+
+                    updateSeatMatrixForShowtime(tempMovie, currentShowTime);
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi thanh toán: " + ex.getMessage(), "Lỗi hệ thống", JOptionPane.ERROR_MESSAGE);
+                ex.printStackTrace();
+            }
         }
     }
 }

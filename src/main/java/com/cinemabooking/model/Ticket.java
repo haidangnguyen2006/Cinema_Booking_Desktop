@@ -8,6 +8,8 @@ public class Ticket {
     private double price;
     private String status; // 'Confirmed' hoặc 'Cancelled'
 
+    public Ticket() {
+    }
     public Ticket(int ticketId, int invoiceId, int showTimeId, int seatId, double price, String status) {
         this.ticketId = ticketId;
         this.invoiceId = invoiceId;

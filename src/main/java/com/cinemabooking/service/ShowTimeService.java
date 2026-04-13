@@ -5,6 +5,7 @@ import com.cinemabooking.dao.ShowTimeDAO;
 import com.cinemabooking.model.Seat;
 import com.cinemabooking.model.ShowTime;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -25,5 +26,8 @@ public class ShowTimeService {
     // Lấy sơ đồ ghế (kèm trạng thái đã bán/trống) của 1 lịch chiếu
     public List<Seat> getSeatsForShowTime(int roomId, int showTimeId) throws SQLException {
         return seatDAO.getSeatsForShowTime(roomId, showTimeId);
+    }
+    public List<ShowTime> getShowTimesByMovieAndDate(int movieId, Date date) throws SQLException {
+        return showTimeDAO.getShowTimesByMovieAndDate(movieId, date);
     }
 }

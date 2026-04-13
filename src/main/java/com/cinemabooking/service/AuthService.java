@@ -16,7 +16,7 @@ public class AuthService {
     public boolean login(String username, String password) throws SQLException {
         User user = userDAO.authenticate(username, password);
         if (user != null) {
-            SessionManager.setCurrentUser(user); // Lưu phiên đăng nhập
+            SessionManager.setCurrentUser(user);
             return true;
         }
         return false;
@@ -24,7 +24,7 @@ public class AuthService {
     public boolean register(String username, String password, String fullname,String role) throws SQLException{
         User user = userDAO.register(username, password,fullname,role);
         if (user != null) {
-//            SessionManager.setCurrentUser(user); // Lưu phiên đăng nhập
+//            SessionManager.setCurrentUser(user);
             return true;
         }
         return false;

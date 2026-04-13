@@ -27,7 +27,7 @@ public class InvoiceDAO {
             if (invoice.getCustomerPhone() != null && !invoice.getCustomerPhone().isEmpty()) {
                 stmtInvoice.setString(2, invoice.getCustomerPhone());
             } else {
-                stmtInvoice.setNull(2, Types.NVARCHAR); // Khách vãng lai
+                stmtInvoice.setNull(2, Types.NVARCHAR);
             }
             stmtInvoice.setDouble(3, invoice.getTotalAmount());
             stmtInvoice.setDouble(4, invoice.getDiscountAmount());
@@ -51,7 +51,7 @@ public class InvoiceDAO {
                 stmtTicket.setInt(2, t.getShowTimeId());
                 stmtTicket.setInt(3, t.getSeatId());
                 stmtTicket.setDouble(4, t.getPrice());
-                stmtTicket.addBatch(); // Gom lệnh lại
+                stmtTicket.addBatch();
             }
             stmtTicket.executeBatch();
 

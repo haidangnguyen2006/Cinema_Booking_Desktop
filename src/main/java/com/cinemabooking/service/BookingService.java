@@ -1,12 +1,11 @@
 package com.cinemabooking.service;
 
 import com.cinemabooking.dao.InvoiceDAO;
-import com.cinemabooking.model.Customer;
-import com.cinemabooking.model.Invoice;
-import com.cinemabooking.model.Ticket;
+import com.cinemabooking.model.*;
 import com.cinemabooking.utils.SessionManager;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookingService {
@@ -16,18 +15,38 @@ public class BookingService {
         this.invoiceDAO = new InvoiceDAO();
     }
 
-    public boolean processPayment(List<Ticket> tickets, Customer customer, double totalAmount) throws SQLException {
+    public boolean processPayment(ShowTime showTime, List<Seat> seats, Customer customer) throws SQLException {
+        // 1. Tính tổng tiền gốc
+        double totalAmount = seats.size() * showTime.getTicketPrice();
+
+        // 2. Chuyển đổi List<Seat> sang List<Ticket> cho DAO
+        List<Ticket> tickets = new ArrayList<>();
+        for (Seat seat : seats) {
+            Ticket ticket = new Ticket();
+            ticket.setShowTimeId(showTime.getShowTimeId());
+            ticket.setSeatId(seat.getSeatId());
+            ticket.setPrice(showTime.getTicketPrice());
+            ticket.setStatus("Confirmed");
+            tickets.add(ticket);
+        }
+
+        // 3. Khởi tạo Hóa đơn (Invoice)
         Invoice invoice = new Invoice();
 
-        // Lấy ID của nhân viên đang đăng nhập
-        invoice.setStaffId(SessionManager.getCurrentUser().getUserId());
+        // Lấy ID của nhân viên đang đăng nhập (An toàn)
+        if (SessionManager.isLoggedIn()) {
+            invoice.setStaffId(SessionManager.getCurrentUser().getUserId());
+        } else {
+            invoice.setStaffId("NV01");
+        }
+
         invoice.setTotalAmount(totalAmount);
 
         double discountAmount = 0;
         double finalAmount = totalAmount;
         boolean isDiscountApplied = false;
 
-        // Xử lý Khách hàng thành viên & Điểm
+        // 4. Xử lý Khách hàng thành viên & Điểm
         if (customer != null) {
             invoice.setCustomerPhone(customer.getPhone());
 
@@ -38,7 +57,6 @@ public class BookingService {
             }
 
             finalAmount = totalAmount - discountAmount;
-
             if (finalAmount < 0) finalAmount = 0;
 
             // QUY TẮC BR01 & BR03: Tính điểm dựa trên tiền thực trả, bỏ phần dư dưới 50k
@@ -53,6 +71,7 @@ public class BookingService {
         invoice.setDiscountAmount(discountAmount);
         invoice.setFinalAmount(finalAmount);
 
+        // 5. Đẩy cục dữ liệu xuống InvoiceDAO
         return invoiceDAO.createInvoiceTransaction(invoice, tickets, isDiscountApplied);
     }
 }

@@ -14,8 +14,6 @@ public class Main {
         } catch (Exception ex) {
             System.err.println("Không thể khởi tạo giao diện FlatLaf.");
         }
-        // Test connection
-        DatabaseConnection.getConnection();
         new Thread(() -> {
             try {
                 System.out.println("Bắt đầu gọi API kéo phim từ TMDB...");

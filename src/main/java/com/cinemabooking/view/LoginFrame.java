@@ -20,7 +20,7 @@ public class LoginFrame extends JFrame {
         UIManager.put("CheckBox.icon.style", "filled");
 
         setTitle("Cinema Booking - Login");
-        setSize(1300, 700);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         /*setResizable(false);*/
