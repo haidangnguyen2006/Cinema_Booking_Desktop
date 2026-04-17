@@ -76,14 +76,8 @@ License
 - Mặc định đặt license MIT. Bạn có thể thay đổi nếu muốn một license khác.
 
 Liên hệ
-- Dự án được phát triển phục vụ học tập/đồ án môn học. Nếu cần trợ giúp hoặc mở rộng tính năng, bạn có thể mở issue hoặc liên hệ trực tiếp với tác giả dự án.
+- Dự án được phát triển phục vụ học tập/đồ án môn học. Nếu cần trợ giúp hoặc mở rộng tính năng, bạn có thể mở issue hoặc liên hệ trực tiếp với tôi nguyenhaidangnt2006@gmail.com.
 
----
-
-Ghi chú nhanh: nếu bạn muốn, tôi có thể:
-- Thêm ví dụ cụ thể về `config.properties` (mẫu không chứa mật khẩu thực tế).
-- Tạo script Maven để đóng gói thành executable jar.
-- Viết hướng dẫn chi tiết để cấu hình DB (tạo bảng, schema SQL).
 
 
 
