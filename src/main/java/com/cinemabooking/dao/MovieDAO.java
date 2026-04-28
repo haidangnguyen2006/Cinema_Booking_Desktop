@@ -70,4 +70,21 @@ public class MovieDAO {
         }
         return movies;
     }
+    public boolean deleteMovie(int movieId) throws SQLException {
+        String sql = "DELETE FROM Movies WHERE MovieID = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, movieId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 547) { // 547 là mã lỗi vi phạm ràng buộc khóa ngoại trong SQL Server
+                throw new SQLException("Không thể xóa phim này vì đang có Lịch chiếu hoặc Vé đã được bán!");
+            }
+            throw e;
+        }
+    }
 }

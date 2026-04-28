@@ -29,20 +29,19 @@ public class MainDashboardFrame extends JFrame {
 
     private void initComponents() {
 
-        // 1. Thêm Header (Thanh điều hướng bên trên)
+        // 1. Thêm Header
         add(createHeaderPanel(), BorderLayout.NORTH);
 
         // 2. KHỞI TẠO CARDLAYOUT CHO KHU VỰC CENTER
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
-        // Add các màn hình vào CardPanel kèm theo "Tên Nhận Diện"
-        cardPanel.add(createMainContentPanel(), "VIEW_HOME");   // Màn hình Home
-        cardPanel.add(new POSPanel(), "VIEW_POS");              // Màn hình Bán vé
-
+        cardPanel.add(createMainContentPanel(), "VIEW_HOME");
+        cardPanel.add(new POSPanel(), "VIEW_POS");
+        cardPanel.add(new MovieManagementPanel(), "VIEW_MOVIE");
+        cardPanel.add(new ShowTimeManagementPanel(), "VIEW_SHOWTIME");
         add(cardPanel, BorderLayout.CENTER);
 
-        // Mặc định hiện màn hình Home
         cardLayout.show(cardPanel, "VIEW_HOME");
     }
 
@@ -93,17 +92,14 @@ public class MainDashboardFrame extends JFrame {
             leftNav.add(btnMenu);
         }
 
-        // --- Cụm Thông tin User (Bên phải) ---
         JPanel rightNav = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         rightNav.setOpaque(false);
 
-        // Lấy tên nhân viên từ SessionManager
         String staffName = SessionManager.isLoggedIn() ? SessionManager.getCurrentUser().getFullName() : "Admin";
         JLabel lblUser = new JLabel("Xin chào, " + staffName);
         lblUser.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         lblUser.setForeground(Color.WHITE);
 
-        // Icon Demo (Bạn có thể thay bằng ImageIcon thực tế sau)
         ImageIcon userIcon=new ImageIcon(getClass().getResource("/icons/person-48.png"));
         Image img = userIcon.getImage();
         Image newImg = img.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
@@ -128,11 +124,10 @@ public class MainDashboardFrame extends JFrame {
         JPanel wrapperPanel = new JPanel(new GridBagLayout());
         wrapperPanel.setBackground(COLOR_BG_LIGHT);
 
-        // Panel chứa nội dung chính (Fixed width)
         JPanel mainPanel = new JPanel(new BorderLayout(0, 30));
         mainPanel.setOpaque(false);
         mainPanel.setPreferredSize(new Dimension(1000, 600));
-        // --- Dòng chào mừng (Top) ---
+
         JPanel greetingPanel = new JPanel();
         greetingPanel.setLayout(new BoxLayout(greetingPanel, BoxLayout.Y_AXIS));
         greetingPanel.setOpaque(false);
@@ -148,15 +143,14 @@ public class MainDashboardFrame extends JFrame {
         greetingPanel.add(lblWelcome);
         greetingPanel.add(Box.createVerticalStrut(5));
         greetingPanel.add(lblSub);
-        greetingPanel.add(Box.createVerticalStrut(40)); // Khoảng cách tới các thẻ
+        greetingPanel.add(Box.createVerticalStrut(40));
 
         mainPanel.add(greetingPanel, BorderLayout.NORTH);
 
-        // --- Lưới các thẻ chức năng (Center) ---
+        // --- Lưới các thẻ chức năng ---
         JPanel gridPanel = new JPanel(new GridLayout(2, 2, 40, 40));
         gridPanel.setOpaque(false);
 
-        // Tạo các thẻ (Sử dụng class DashboardCard tự custom bên dưới)
         DashboardCard cardBanVe = new DashboardCard("Bán vé",
                 "Quản lý và bán vé cho khách hàng", new ImageIcon(getClass().getResource("/icons/cinema-ticket-100.png")));
         DashboardCard cardPhim = new DashboardCard("Phim",
@@ -177,11 +171,16 @@ public class MainDashboardFrame extends JFrame {
         cardPhim.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JOptionPane.showMessageDialog(MainDashboardFrame.this, "Mở màn hình Phim...");
-                // TODO: Chuyển sang panel phim
+                cardLayout.show(cardPanel, "VIEW_MOVIE");
             }
         });
 
+        cardLichChieu.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                cardLayout.show(cardPanel, "VIEW_SHOWTIME");
+            }
+        });
         gridPanel.add(cardBanVe);
         gridPanel.add(cardPhim);
         gridPanel.add(cardLichChieu);
@@ -204,7 +203,6 @@ public class MainDashboardFrame extends JFrame {
         public DashboardCard(String title, String description, ImageIcon iconSymbol) {
             setOpaque(false);
             setCursor(new Cursor(Cursor.HAND_CURSOR));
-            // Dùng BorderLayout với khoảng cách chiều ngang giữa Icon và Text là 25px
             setLayout(new BorderLayout(25, 0));
             setBorder(new EmptyBorder(25, 30, 25, 30)); // Padding bên trong thẻ
 
@@ -212,7 +210,7 @@ public class MainDashboardFrame extends JFrame {
             addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent e) { setBorder(BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(COLOR_PRIMARY_YELLOW, 2),
-                        new EmptyBorder(23, 28, 23, 28) // Trừ hao 2px viền để không bị giật layout
+                        new EmptyBorder(23, 28, 23, 28)
                 )); }
                 public void mouseExited(MouseEvent e) { setBorder(new EmptyBorder(25, 30, 25, 30)); }
             });
@@ -235,22 +233,21 @@ public class MainDashboardFrame extends JFrame {
 
             // --- 2. Khu vực Chữ (Bên phải) ---
             JPanel textPanel = new JPanel();
-            textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS)); // Xếp dọc
+            textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
             textPanel.setOpaque(false);
 
             JLabel lblTitle = new JLabel(title);
             lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 26));
-            lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT); // Ép sát lề trái
+            lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
             JLabel lblDesc = new JLabel(description);
             lblDesc.setFont(new Font("Segoe UI", Font.PLAIN, 15));
             lblDesc.setForeground(new Color(120, 120, 120));
-            lblDesc.setAlignmentX(Component.LEFT_ALIGNMENT); // Ép sát lề trái
+            lblDesc.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-            // Dùng Box.createVerticalGlue() để ép khối chữ nằm chính giữa theo chiều dọc
             textPanel.add(Box.createVerticalGlue());
             textPanel.add(lblTitle);
-            textPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Khoảng cách giữa Title và Desc
+            textPanel.add(Box.createRigidArea(new Dimension(0, 5)));
             textPanel.add(lblDesc);
             textPanel.add(Box.createVerticalGlue());
 
@@ -262,16 +259,13 @@ public class MainDashboardFrame extends JFrame {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // Vẽ nền trắng bo góc
             g2.setColor(Color.WHITE);
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 25, 25);
 
-            // Vẽ họa tiết tròn màu vàng
             g2.setColor(COLOR_LIGHT_YELLOW);
             int circleSize = 110;
             g2.fillArc(getWidth() - circleSize / 2, -circleSize / 2, circleSize, circleSize, 180, 90);
 
-            // Bóng đổ (Shadow nhẹ)
             g2.setColor(new Color(220, 220, 225));
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 25, 25);
 
