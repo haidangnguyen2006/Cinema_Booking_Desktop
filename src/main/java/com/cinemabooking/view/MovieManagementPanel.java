@@ -23,13 +23,10 @@ public class MovieManagementPanel extends JPanel {
         setBackground(new Color(245, 246, 250));
         setBorder(new EmptyBorder(30, 30, 30, 30));
 
-        // 1. HEADER & ACTION BUTTONS
         add(createHeaderPanel(), BorderLayout.NORTH);
 
-        // 2. MOVIE TABLE
         add(createTablePanel(), BorderLayout.CENTER);
 
-        // Load dữ liệu lần đầu
         loadMovieData();
     }
 
@@ -97,7 +94,6 @@ public class MovieManagementPanel extends JPanel {
         movieTable.getTableHeader().setBackground(new Color(240, 240, 240));
         movieTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Chỉnh độ rộng cột
         movieTable.getColumnModel().getColumn(0).setPreferredWidth(50);
         movieTable.getColumnModel().getColumn(2).setPreferredWidth(300);
 
@@ -108,9 +104,9 @@ public class MovieManagementPanel extends JPanel {
         return tablePanel;
     }
 
-    // ==========================================
+    
     // HÀM TẢI DỮ LIỆU TỪ DATABASE LÊN BẢNG
-    // ==========================================
+    
     private void loadMovieData() {
         new SwingWorker<List<Movie>, Void>() {
             @Override
@@ -145,17 +141,16 @@ public class MovieManagementPanel extends JPanel {
         }.execute();
     }
 
-    // ==========================================
+    
     // HÀM ĐỒNG BỘ API TMDB VỚI THANH LOADING
-    // ==========================================
+    
     private void syncMoviesFromTMDB() {
-        // Hiện hộp thoại Loading (Ngăn người dùng bấm bậy bạ lúc đang tải mạng)
         JDialog loadingDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Đang xử lý", true);
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(new EmptyBorder(20, 20, 20, 20));
         panel.add(new JLabel("Đang kéo dữ liệu phim mới nhất từ mạng, vui lòng đợi..."), BorderLayout.CENTER);
         JProgressBar progressBar = new JProgressBar();
-        progressBar.setIndeterminate(true); // Thanh chạy vô tận
+        progressBar.setIndeterminate(true); 
         panel.add(progressBar, BorderLayout.SOUTH);
         loadingDialog.add(panel);
         loadingDialog.pack();
@@ -173,9 +168,9 @@ public class MovieManagementPanel extends JPanel {
             protected void done() {
                 loadingDialog.dispose();
                 try {
-                    get(); // Bắt lỗi nếu quá trình kéo API bị lỗi
+                    get();
                     JOptionPane.showMessageDialog(MovieManagementPanel.this, "Đồng bộ phim thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                    loadMovieData(); // Làm mới lại bảng
+                    loadMovieData(); 
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(MovieManagementPanel.this, "Lỗi khi đồng bộ TMDB: " + e.getMessage(), "Lỗi mạng", JOptionPane.ERROR_MESSAGE);
                 }

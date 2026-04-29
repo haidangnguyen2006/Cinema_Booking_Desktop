@@ -43,7 +43,7 @@ public class CustomerDAO {
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            if (e.getErrorCode() == 2627) { // 2627 là mã lỗi Violation of PRIMARY KEY constraint
+            if (e.getErrorCode() == 2627) {
                 throw new SQLException("Số điện thoại này đã được đăng ký!");
             }
             throw e;

@@ -55,9 +55,9 @@ public class POSPanel extends JPanel {
         add(createRightPanel(), BorderLayout.EAST);
     }
 
-    // =========================================
+    
     // 1. CỘT TRÁI: CHỌN PHIM VÀ SUẤT CHIẾU
-    // =========================================
+    
     private JPanel createLeftPanel() {
         JPanel leftPanel = new JPanel(new BorderLayout(0, 10));
         leftPanel.setPreferredSize(new Dimension(350, 0));
@@ -67,7 +67,7 @@ public class POSPanel extends JPanel {
                 new EmptyBorder(10, 10, 10, 10)
         ));
 
-        // --- HEADER CHỨA TIÊU ĐỀ VÀ THANH CHỌN NGÀY ---
+        // --- HEADER CHỨA TIÊU ĐỀ VÀ THANH CHỌN NGÀY
         JPanel headerPanel = new JPanel(new BorderLayout(0, 10));
         headerPanel.setBackground(Color.WHITE);
 
@@ -138,9 +138,9 @@ public class POSPanel extends JPanel {
         return leftPanel;
     }
 
-    // =========================================
+    
     // HÀM TẢI LẠI DANH SÁCH PHIM
-    // =========================================
+    
     private void loadMoviesList() {
         listContainer.removeAll();
         JLabel lblLoading = new JLabel("Đang tải dữ liệu...", SwingConstants.CENTER);
@@ -179,9 +179,9 @@ public class POSPanel extends JPanel {
         }.execute();
     }
 
-    // =========================================
+    
     // INNER CLASS: GIAO DIỆN GẬP MỞ CHO TỪNG PHIM
-    // =========================================
+    
     class MovieAccordionItem extends JPanel {
         private boolean isExpanded = false;
         private JPanel bodyPanel;
@@ -342,9 +342,9 @@ public class POSPanel extends JPanel {
         }
     }
 
-    // =========================================
+    
     // 2. CỘT GIỮA: SƠ ĐỒ GHẾ (SEAT MATRIX)
-    // =========================================
+    
     private JPanel createCenterPanel() {
         JPanel centerPanel = new JPanel(new BorderLayout(0, 20));
         centerPanel.setOpaque(false);
@@ -396,9 +396,9 @@ public class POSPanel extends JPanel {
         return panel;
     }
 
-    // =========================================
+    
     // 3. CỘT PHẢI: HÓA ĐƠN THU NGÂN (BILLING)
-    // =========================================
+    
     private JPanel createRightPanel() {
         JPanel rightPanel = new JPanel(new BorderLayout(0, 15));
         rightPanel.setPreferredSize(new Dimension(300, 0));
@@ -570,9 +570,9 @@ public class POSPanel extends JPanel {
         }.execute();
     }
 
-    // =========================================
+    
     // Tính tiền
-    // =========================================
+    
     private void updateBillDetails() {
         if (selectedSeats.isEmpty() || currentShowTime == null) {
             lblBillSeat.setText("Ghế: --");

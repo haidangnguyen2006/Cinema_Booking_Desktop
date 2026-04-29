@@ -28,7 +28,7 @@ public class LoginFrame extends JFrame {
     }
 
     private void initComponents() {
-        // 1. Panel Nền (Chứa ảnh background)
+        // 1. Panel Nền
         JPanel backgroundPanel = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -49,8 +49,8 @@ public class LoginFrame extends JFrame {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(45, 45, 45, 220)); // Màu xám tối, độ trong suốt 220/255
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30); // Bo góc 30px
+                g2.setColor(new Color(45, 45, 45, 220));
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                 g2.dispose();
                 super.paintComponent(g);
             }
@@ -95,7 +95,7 @@ public class LoginFrame extends JFrame {
         txtPassword.setPreferredSize(new Dimension(300, 45));
         txtPassword.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         txtPassword.putClientProperty("JTextField.placeholderText", "Password");
-        txtPassword.putClientProperty("JTextField.showRevealButton", true); // Hiện nút xem mật khẩu con mắt
+        txtPassword.putClientProperty("JTextField.showRevealButton", true);
         txtPassword.addActionListener(this::handleLogin);
         gbc.gridy = 2;
         formPanel.add(txtPassword, gbc);
@@ -113,8 +113,8 @@ public class LoginFrame extends JFrame {
         btnLogin = new JButton("Đăng nhập");
         btnLogin.setPreferredSize(new Dimension(300, 45));
         btnLogin.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btnLogin.setBackground(new Color(242, 194, 62)); // Màu vàng nhạt
-        btnLogin.setForeground(new Color(40, 40, 40));   // Chữ đen xám
+        btnLogin.setBackground(new Color(242, 194, 62));
+        btnLogin.setForeground(new Color(40, 40, 40));
         btnLogin.setFocusPainted(false);
         btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnLogin.addActionListener(this::handleLogin);

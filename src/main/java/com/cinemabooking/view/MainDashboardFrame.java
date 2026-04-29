@@ -29,10 +29,10 @@ public class MainDashboardFrame extends JFrame {
 
     private void initComponents() {
 
-        // 1. Thêm Header
+        // Thêm Header
         add(createHeaderPanel(), BorderLayout.NORTH);
 
-        // 2. KHỞI TẠO CARDLAYOUT CHO KHU VỰC CENTER
+        // KHỞI TẠO CARDLAYOUT CHO  CENTER
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
@@ -45,19 +45,17 @@ public class MainDashboardFrame extends JFrame {
         cardLayout.show(cardPanel, "VIEW_HOME");
     }
 
-    // ==========================================
-    // KHU VỰC HEADER (NAVBAR)
-    // ==========================================
+    //  HEADER (NAVBAR)
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(COLOR_DARK_NAV);
         headerPanel.setPreferredSize(new Dimension(getWidth(), 60));
         headerPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
 
-        // --- Cụm Logo & Menu (Bên trái) ---
+        //Cụm Logo & Menu (Bên trái) ---
         JPanel leftNav = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         leftNav.setOpaque(false);
-        ImageIcon iuhLogo=new ImageIcon(getClass().getResource("/icons/iuh-logo.png"));
+        ImageIcon iuhLogo = new ImageIcon(getClass().getResource("/icons/iuh-logo.png"));
         Image imgIuh = iuhLogo.getImage();
         Image newImgIuh = imgIuh.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
 
@@ -65,16 +63,29 @@ public class MainDashboardFrame extends JFrame {
 
         JLabel lblIcon = new JLabel(scaledIconIuh, SwingConstants.CENTER);
         lblIcon.setFont(new Font("Segoe UI", Font.PLAIN, 60));
+        lblIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                cardLayout.show(cardPanel, "VIEW_HOME");
+            }
+        });
 
         JLabel lblLogo = new JLabel("CINEMA");
         lblLogo.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblLogo.setForeground(Color.WHITE);
+        lblLogo.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblLogo.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                cardLayout.show(cardPanel, "VIEW_HOME");
+            }
+        });
 
         leftNav.add(lblIcon);
         leftNav.add(lblLogo);
 
-        // Các nút Menu
-        String[] menus = {"Bán vé", "Phim", "Lịch chiếu", "Thống kê", "Hỗ trợ"};
+        String[] menus = {"Bán vé", "Phim", "Lịch chiếu"};
         for (String menu : menus) {
             JButton btnMenu = new JButton(menu);
             btnMenu.setFont(new Font("Segoe UI", Font.PLAIN, 15));
@@ -84,14 +95,29 @@ public class MainDashboardFrame extends JFrame {
             btnMenu.setFocusPainted(false);
             btnMenu.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-            // Hiệu ứng hover
             btnMenu.addMouseListener(new MouseAdapter() {
                 public void mouseEntered(MouseEvent e) { btnMenu.setForeground(COLOR_PRIMARY_YELLOW); }
                 public void mouseExited(MouseEvent e) { btnMenu.setForeground(new Color(200, 200, 200)); }
             });
+
+            btnMenu.addActionListener(e -> {
+                switch (menu) {
+                    case "Bán vé":
+                        cardLayout.show(cardPanel, "VIEW_POS");
+                        break;
+                    case "Phim":
+                        cardLayout.show(cardPanel, "VIEW_MOVIE");
+                        break;
+                    case "Lịch chiếu":
+                        cardLayout.show(cardPanel, "VIEW_SHOWTIME");
+                        break;
+                }
+            });
+
             leftNav.add(btnMenu);
         }
 
+        //Cụm User & Đăng xuất (Bên phải)
         JPanel rightNav = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         rightNav.setOpaque(false);
 
@@ -100,15 +126,30 @@ public class MainDashboardFrame extends JFrame {
         lblUser.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         lblUser.setForeground(Color.WHITE);
 
-        ImageIcon userIcon=new ImageIcon(getClass().getResource("/icons/person-48.png"));
+        ImageIcon userIcon = new ImageIcon(getClass().getResource("/icons/person-48.png"));
         Image img = userIcon.getImage();
         Image newImg = img.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
 
         ImageIcon scaledIcon = new ImageIcon(newImg);
 
         JLabel lblUserIcon = new JLabel(scaledIcon);
-        lblUserIcon.setFont(new Font("Segoe UI", Font.PLAIN, 20));
-        lblUserIcon.setForeground(Color.WHITE);
+        lblUserIcon.setToolTipText("Nhấn vào đây để Đăng xuất");
+        lblUserIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        lblUserIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(headerPanel,
+                        "Bạn có muốn đăng xuất không?",
+                        "Đăng xuất",
+                        JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    SessionManager.logout();
+                    dispose();
+                    new LoginFrame().setVisible(true);
+                }
+            }
+        });
 
         rightNav.add(lblUser);
         rightNav.add(lblUserIcon);
@@ -147,7 +188,7 @@ public class MainDashboardFrame extends JFrame {
 
         mainPanel.add(greetingPanel, BorderLayout.NORTH);
 
-        // --- Lưới các thẻ chức năng ---
+        //Lưới các thẻ chức năng
         JPanel gridPanel = new JPanel(new GridLayout(2, 2, 40, 40));
         gridPanel.setOpaque(false);
 
@@ -157,9 +198,6 @@ public class MainDashboardFrame extends JFrame {
                 "Quản lý và thông tin phim", new ImageIcon(getClass().getResource("/icons/film-96.png")));
         DashboardCard cardLichChieu = new DashboardCard("Lịch chiếu",
                 "Sắp xếp và quản lý lịch chiếu", new ImageIcon(getClass().getResource("/icons/calendar-100.png")));
-        DashboardCard cardThongKe = new DashboardCard("Thống kê",
-                "Thống kê và xuất báo cáo", new ImageIcon(getClass().getResource("/icons/statistic-96.png")));
-
         // Click event on card
         cardBanVe.addMouseListener(new MouseAdapter() {
             @Override
@@ -184,7 +222,6 @@ public class MainDashboardFrame extends JFrame {
         gridPanel.add(cardBanVe);
         gridPanel.add(cardPhim);
         gridPanel.add(cardLichChieu);
-        gridPanel.add(cardThongKe);
 
         JPanel centerWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT));
         centerWrapper.setOpaque(false);
@@ -215,7 +252,7 @@ public class MainDashboardFrame extends JFrame {
                 public void mouseExited(MouseEvent e) { setBorder(new EmptyBorder(25, 30, 25, 30)); }
             });
 
-            // --- 1. Khu vực Icon (Bên trái) ---
+            //1.  Icon (Bên trái) ---
             JLabel lblIcon = new JLabel();
             try {
                 Image img = iconSymbol.getImage();
@@ -231,7 +268,7 @@ public class MainDashboardFrame extends JFrame {
             }
             add(lblIcon, BorderLayout.WEST);
 
-            // --- 2. Khu vực Chữ (Bên phải) ---
+            //2.  Chữ (Bên phải) ---
             JPanel textPanel = new JPanel();
             textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
             textPanel.setOpaque(false);
