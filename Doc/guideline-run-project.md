@@ -1,7 +1,5 @@
 # Hướng dẫn chạy dự án CinemaTicket
 
-Badges (logo):
-
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 
@@ -27,25 +25,14 @@ Từ PowerShell (hoặc Git GUI):
 
 ```powershell
 git clone <repo-url>
-cd "E:\IUH HK2 2025-2026\Lap-trinh-huong-su-kien\CinemaTicket"  # or open the folder in your IDE (this repo root)
-git checkout <branch-name>
+cd <thư mục dự án>  # or open the folder in your IDE (this repo root)
+git checkout master
 git pull
 ```
 
 3. Build project
 
-```powershell
-mvn clean package
-```
-
-Gợi ý: nếu muốn chạy bằng command-line sau khi build, hãy copy dependencies:
-
-```powershell
-mvn dependency:copy-dependencies -DoutputDirectory=target/dependency
-java -cp "target/classes;target/dependency/*" com.cinemabooking.main.Main
-```
-
-Hoặc mở project với IntelliJ IDEA: File -> Open -> chọn `[pom.xml](../pom.xml)`, rồi Run lớp `[Main.java](../src/main/java/com/cinemabooking/main/Main.java)` (Main class nằm ở `src/main/java/com/cinemabooking/main/Main.java`).
+mở project với IntelliJ IDEA: File -> Open -> chọn `[pom.xml](../pom.xml)`, rồi Run lớp `[Main.java](../src/main/java/com/cinemabooking/main/Main.java)` (Main class nằm ở `src/main/java/com/cinemabooking/main/Main.java`).
 
 4. Cấu hình kết nối Database
 
@@ -61,7 +48,7 @@ private static final String PASSWORD = "123";
 private static final String PORT = "1433";
 ```
 
-Bạn thay trực tiếp các giá trị trên cho phù hợp môi trường SSMS của bạn (host, port, database, username, password). Nếu muốn an toàn hơn, bạn có thể thay đổi code để đọc từ `config.properties` hoặc biến môi trường.
+Bạn thay trực tiếp các giá trị trên cho phù hợp môi trường SSMS của bạn (host, port, database, username, password).
 
 Ví dụ JDBC URL chuẩn cho SQL Server được dùng trong `DatabaseConnection`:
 
