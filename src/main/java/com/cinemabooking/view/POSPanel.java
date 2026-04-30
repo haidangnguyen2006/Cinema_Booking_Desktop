@@ -540,9 +540,17 @@ public class POSPanel extends JPanel {
                             btnSeat.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
                             if (seat.isSold()) {
-                                // GHẾ ĐÃ BÁN
                                 btnSeat.setBackground(COLOR_SEAT_SOLD);
-                                btnSeat.setEnabled(false);
+                                btnSeat.setForeground(Color.WHITE);
+                                btnSeat.setRolloverEnabled(false);
+
+                                btnSeat.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+                                btnSeat.addActionListener(e -> {
+                                    btnSeat.setSelected(false);
+                                    //JOptionPane.showMessageDialog(this, "Ghế " + seat.getSeatName() + " đã được bán!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                                });
+
                             } else {
                                 // GHẾ TRỐNG
                                 btnSeat.setBackground(COLOR_SEAT_AVAILABLE);

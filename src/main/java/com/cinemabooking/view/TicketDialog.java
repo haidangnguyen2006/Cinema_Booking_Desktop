@@ -27,7 +27,7 @@ public class TicketDialog extends JDialog {
         ticketPanel.setBackground(Color.WHITE);
         ticketPanel.setBorder(BorderFactory.createCompoundBorder(
                 new EmptyBorder(20, 20, 20, 20),
-                BorderFactory.createDashedBorder(Color.GRAY, 3, 2, 5, true) // Viền đứt nét giống biên lai
+                BorderFactory.createDashedBorder(Color.GRAY, 3, 2, 5, true)
         ));
 
         // 1. Header Hóa đơn
@@ -43,8 +43,9 @@ public class TicketDialog extends JDialog {
         ticketPanel.add(lblSubHeader);
         ticketPanel.add(Box.createVerticalStrut(20));
 
-        // 2. Nội dung chi tiết vé (Dùng font Monospaced để giống máy in bill)
-        JPanel detailsPanel = new JPanel(new GridLayout(0, 1, 0, 8));
+        // 2. Nội dung chi tiết vé (Đổi sang BoxLayout để chiều cao mỗi dòng linh hoạt)
+        JPanel detailsPanel = new JPanel();
+        detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
         detailsPanel.setBackground(Color.WHITE);
         detailsPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
 
@@ -53,7 +54,6 @@ public class TicketDialog extends JDialog {
         String dateStr = sdfDate.format(showTime.getStartTime());
         String timeStr = sdfTime.format(showTime.getStartTime());
 
-        // Gộp danh sách ghế: "C1, C2, C3"
         String seatStr = seats.stream().map(Seat::getSeatName).collect(Collectors.joining(", "));
 
         detailsPanel.add(createReceiptLine("Phim (Movie):", movieName));
@@ -66,24 +66,30 @@ public class TicketDialog extends JDialog {
             detailsPanel.add(createReceiptLine("Khách hàng:", customer.getFullName()));
         }
 
-        detailsPanel.add(new JSeparator(SwingConstants.HORIZONTAL)); // Đường kẻ ngang
+        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        detailsPanel.add(sep);
+        detailsPanel.add(Box.createVerticalStrut(8));
 
         detailsPanel.add(createReceiptLine("Tổng tiền:", String.format("%,.0f VNĐ", total)));
         if (discount > 0) {
             detailsPanel.add(createReceiptLine("Giảm giá:", String.format("-%,.0f VNĐ", discount)));
         }
 
+        JPanel finalPanel = new JPanel(new BorderLayout());
+        finalPanel.setBackground(Color.WHITE);
+        finalPanel.setMaximumSize(new Dimension(400, 30));
         JLabel lblFinal = new JLabel(String.format("THỰC THU: %,.0f VNĐ", finalAmt));
         lblFinal.setFont(new Font("Consolas", Font.BOLD, 16));
         lblFinal.setHorizontalAlignment(SwingConstants.RIGHT);
-        detailsPanel.add(lblFinal);
+        finalPanel.add(lblFinal, BorderLayout.EAST);
+        detailsPanel.add(finalPanel);
 
         ticketPanel.add(detailsPanel);
         ticketPanel.add(Box.createVerticalStrut(30));
 
-        // 3. Footer (Mã vạch giả lập)
         JLabel lblBarcode = new JLabel("|||| | || ||| || ||| | ||");
-        lblBarcode.setFont(new Font("Consolas", Font.PLAIN, 36)); // Dùng các vạch dọc làm barcode giả
+        lblBarcode.setFont(new Font("Consolas", Font.PLAIN, 36));
         lblBarcode.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblThanks = new JLabel("Chúc bạn xem phim vui vẻ!");
@@ -93,7 +99,6 @@ public class TicketDialog extends JDialog {
         ticketPanel.add(lblBarcode);
         ticketPanel.add(lblThanks);
 
-        // Bọc ticketPanel vào một panel nền xám để tạo cảm giác nổi
         JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 20));
         wrapperPanel.setOpaque(false);
         ticketPanel.setPreferredSize(new Dimension(320, 480));
@@ -106,26 +111,33 @@ public class TicketDialog extends JDialog {
         bottomPanel.setOpaque(false);
         JButton btnClose = new JButton("HOÀN TẤT & IN VÉ");
         btnClose.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnClose.setBackground(new Color(242, 194, 62)); // Màu vàng của app
+        btnClose.setBackground(new Color(242, 194, 62));
         btnClose.setFocusPainted(false);
         btnClose.setPreferredSize(new Dimension(200, 40));
-        btnClose.addActionListener(e -> dispose()); // Đóng hộp thoại
+        btnClose.addActionListener(e -> dispose());
 
         bottomPanel.add(btnClose);
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    // Hàm tiện ích tạo một dòng text trên bill (Trái - Phải)
     private JPanel createReceiptLine(String label, String value) {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout(10, 0));
         panel.setBackground(Color.WHITE);
+        panel.setBorder(new EmptyBorder(0, 0, 8, 0));
+
+        panel.setMaximumSize(new Dimension(400, Integer.MAX_VALUE));
 
         JLabel lblLeft = new JLabel(label);
-        lblLeft.setFont(new Font("Consolas", Font.PLAIN, 14)); // Font Consolas cho giống bill
+        lblLeft.setFont(new Font("Consolas", Font.PLAIN, 14));
         lblLeft.setForeground(Color.DARK_GRAY);
+        lblLeft.setVerticalAlignment(SwingConstants.TOP);
+        lblLeft.setPreferredSize(new Dimension(200, 20));
 
-        JLabel lblRight = new JLabel(value);
+        String htmlValue = String.format("<html><div style='width: 140px; text-align: right; word-wrap: break-word;'>%s</div></html>", value);
+
+        JLabel lblRight = new JLabel(htmlValue);
         lblRight.setFont(new Font("Consolas", Font.BOLD, 14));
+        lblRight.setVerticalAlignment(SwingConstants.TOP);
 
         panel.add(lblLeft, BorderLayout.WEST);
         panel.add(lblRight, BorderLayout.EAST);
