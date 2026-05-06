@@ -9,14 +9,18 @@ import com.cinemabooking.model.ShowTime;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ShowTimeManagementPanel extends JPanel {
-
+    private JTextField txtSearch;
+    private TableRowSorter<DefaultTableModel> rowSorter;
     private final ShowTimeDAO showTimeDAO = new ShowTimeDAO();
     private final MovieDAO movieDAO = new MovieDAO();
     private final RoomDAO roomDAO = new RoomDAO();
@@ -126,6 +130,19 @@ public class ShowTimeManagementPanel extends JPanel {
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         actionPanel.setOpaque(false);
 
+        txtSearch = new JTextField(20);
+        txtSearch.putClientProperty("JTextField.placeholderText", "Tìm kiếm tên phim...");
+        txtSearch.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) { filterTable(); }
+            @Override
+            public void removeUpdate(DocumentEvent e) { filterTable(); }
+            @Override
+            public void changedUpdate(DocumentEvent e) { filterTable(); }
+        });
+
         JButton btnDelete = new JButton("Xóa Suất Chọn");
         btnDelete.setBackground(new Color(220, 80, 80));
         btnDelete.setForeground(Color.WHITE);
@@ -140,6 +157,8 @@ public class ShowTimeManagementPanel extends JPanel {
             public boolean isCellEditable(int row, int column) { return false; }
         };
         table = new JTable(tableModel);
+        rowSorter = new TableRowSorter<>(tableModel);
+        table.setRowSorter(rowSorter);
         table.setRowHeight(30);
         table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
 
@@ -251,7 +270,14 @@ public class ShowTimeManagementPanel extends JPanel {
             }
         }
     }
-
+    private void filterTable() {
+        String text = txtSearch.getText().trim();
+        if (text.length() == 0) {
+            rowSorter.setRowFilter(null);
+        } else {
+            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 2));
+        }
+    }
     class MovieItem {
         int id; String title;
         public MovieItem(int id, String title) { this.id = id; this.title = title; }

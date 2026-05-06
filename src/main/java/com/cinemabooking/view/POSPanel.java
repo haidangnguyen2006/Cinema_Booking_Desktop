@@ -119,6 +119,18 @@ public class POSPanel extends JPanel {
         dateScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         dateScroll.setPreferredSize(new Dimension(0, 55));
         headerPanel.add(dateScroll, BorderLayout.CENTER);
+        JTextField txtSearchPos = new JTextField();
+        txtSearchPos.putClientProperty("JTextField.placeholderText", "Tìm nhanh tên phim...");
+        txtSearchPos.setPreferredSize(new Dimension(0, 35));
+        txtSearchPos.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { filterAccordionList(txtSearchPos.getText()); }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { filterAccordionList(txtSearchPos.getText()); }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { filterAccordionList(txtSearchPos.getText()); }
+        });
+        headerPanel.add(txtSearchPos, BorderLayout.SOUTH);
 
         leftPanel.add(headerPanel, BorderLayout.NORTH);
 
@@ -186,8 +198,10 @@ public class POSPanel extends JPanel {
         private boolean isExpanded = false;
         private JPanel bodyPanel;
         private JLabel lblIcon;
+        private String movieTitle;
 
         public MovieAccordionItem(Movie movie) {
+            this.movieTitle = movie.getTitle();
             setLayout(new BorderLayout());
             setBackground(Color.WHITE);
             setBorder(BorderFactory.createLineBorder(new Color(230, 230, 230), 1, true)); // Viền bo góc nhẹ
@@ -339,6 +353,9 @@ public class POSPanel extends JPanel {
             // Thêm Header và Body vào Item chính
             add(headerPanel, BorderLayout.NORTH);
             add(bodyPanel, BorderLayout.CENTER);
+        }
+        public String getMovieTitle() {
+            return this.movieTitle;
         }
     }
 
@@ -640,5 +657,20 @@ public class POSPanel extends JPanel {
                 ex.printStackTrace();
             }
         }
+    }
+    private void filterAccordionList(String keyword) {
+        String lowerKeyword = keyword.toLowerCase().trim();
+
+        for (Component comp : listContainer.getComponents()) {
+            if (comp instanceof MovieAccordionItem) {
+                MovieAccordionItem item = (MovieAccordionItem) comp;
+                boolean isMatch = item.getMovieTitle().toLowerCase().contains(lowerKeyword);
+
+                item.setVisible(isMatch);
+            }
+        }
+
+        listContainer.revalidate();
+        listContainer.repaint();
     }
 }
