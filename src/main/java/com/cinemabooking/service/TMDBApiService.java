@@ -31,23 +31,19 @@ public class TMDBApiService {
 
 
     public void fetchAndSaveNowPlayingMovies() throws Exception {
-        // Tạo request gọi lên TMDB
         String url = BASE_URL + "?api_key=" + API_KEY + "&language=vi-VN&page=1";
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .GET()
                 .build();
 
-        // nhận response dạng String (JSON)
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() == 200) {
-            // Parse JSON thành Java Object bằng Gson
             TMDBResponse tmdbResponse = gson.fromJson(response.body(), TMDBResponse.class);
 
             int countAdded = 0;
 
-            // Lặp qua từng phim và lưu xuống DB
             for (TMDBMovie item : tmdbResponse.results) {
                 if (!movieDAO.isMovieExist(item.id)) {
                     Movie movie = new Movie();
@@ -59,17 +55,14 @@ public class TMDBApiService {
                         movie.setReleaseDate(Date.valueOf(item.release_date));
                     }
 
-                    // TMDB trả về đường dẫn tương đối, cần ghép với base url
                     if (item.poster_path != null) {
                         movie.setPosterUrl(IMAGE_BASE_URL + item.poster_path);
                     }
 
                     movie.setRating(item.vote_average);
 
-                    // Lưu ý: API Now_Playing không trả về Duration (thời lượng).
-                    // Để đơn giản, mình set mặc định 120 phút. Nếu muốn chính xác phải gọi thêm API Detail cho từng phim.
                     movie.setDuration(120);
-                    movie.setGenre("Hành động / Viễn tưởng"); // Mock data thể loại tạm thời
+                    movie.setGenre("Hành động / Viễn tưởng");
 
                     // Lưu vào DB
                     movieDAO.insertMovie(movie);
@@ -82,7 +75,6 @@ public class TMDBApiService {
         }
     }
 
-    // LỚP INNER CLASS ĐỂ GSON MAP DỮ LIỆU JSON
     private static class TMDBResponse {
         List<TMDBMovie> results;
     }

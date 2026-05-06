@@ -21,7 +21,6 @@ public class TicketDialog extends JDialog {
         setLayout(new BorderLayout());
         getContentPane().setBackground(new Color(240, 240, 240));
 
-        // --- KHU VỰC VÉ (Màu trắng, ở giữa) ---
         JPanel ticketPanel = new JPanel();
         ticketPanel.setLayout(new BoxLayout(ticketPanel, BoxLayout.Y_AXIS));
         ticketPanel.setBackground(Color.WHITE);
@@ -30,7 +29,6 @@ public class TicketDialog extends JDialog {
                 BorderFactory.createDashedBorder(Color.GRAY, 3, 2, 5, true)
         ));
 
-        // 1. Header Hóa đơn
         JLabel lblHeader = new JLabel("IUH CINEMA");
         lblHeader.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblHeader.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -43,7 +41,6 @@ public class TicketDialog extends JDialog {
         ticketPanel.add(lblSubHeader);
         ticketPanel.add(Box.createVerticalStrut(20));
 
-        // 2. Nội dung chi tiết vé (Đổi sang BoxLayout để chiều cao mỗi dòng linh hoạt)
         JPanel detailsPanel = new JPanel();
         detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
         detailsPanel.setBackground(Color.WHITE);

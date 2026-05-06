@@ -580,7 +580,6 @@ public class POSPanel extends JPanel {
 
     
     // Tính tiền
-    
     private void updateBillDetails() {
         if (selectedSeats.isEmpty() || currentShowTime == null) {
             lblBillSeat.setText("Ghế: --");

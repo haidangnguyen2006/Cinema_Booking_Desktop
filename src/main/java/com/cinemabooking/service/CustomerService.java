@@ -26,7 +26,6 @@ public class CustomerService {
             throw new IllegalArgumentException("Vui lòng nhập đầy đủ Số điện thoại và Họ tên.");
         }
 
-        // regex cho phone
         if (!phone.matches("^0\\d{9}$")) {
             throw new IllegalArgumentException("Số điện thoại không hợp lệ (Phải bắt đầu bằng 0 và có 10 số).");
         }

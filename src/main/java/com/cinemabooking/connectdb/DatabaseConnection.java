@@ -1,4 +1,4 @@
-package com.cinemabooking.utils;
+package com.cinemabooking.connectdb;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
