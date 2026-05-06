@@ -100,14 +100,6 @@ public class LoginFrame extends JFrame {
         gbc.gridy = 2;
         formPanel.add(txtPassword, gbc);
 
-        // CHECKBOX QUÊN MẬT KHẨU
-        JCheckBox chkRemember = new JCheckBox("Quên mật khẩu");
-        chkRemember.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        chkRemember.setForeground(new Color(200, 200, 200));
-        chkRemember.setOpaque(false);
-        gbc.gridy = 3;
-        gbc.insets = new Insets(0, 30, 15, 30);
-        formPanel.add(chkRemember, gbc);
 
         // LOGIN BUTTON
         btnLogin = new JButton("Đăng nhập");
