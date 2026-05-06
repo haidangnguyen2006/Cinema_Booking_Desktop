@@ -6,13 +6,17 @@ import com.cinemabooking.service.TMDBApiService;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class MovieManagementPanel extends JPanel {
-
+    private JTextField txtSearch;
+    private TableRowSorter<DefaultTableModel> rowSorter;
     private JTable movieTable;
     private DefaultTableModel tableModel;
     private final MovieDAO movieDAO = new MovieDAO();
@@ -43,6 +47,23 @@ public class MovieManagementPanel extends JPanel {
         JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         actionPanel.setOpaque(false);
 
+        // THÊM Ô TÌM KIẾM
+        txtSearch = new JTextField(20);
+        txtSearch.putClientProperty("JTextField.placeholderText", "Tìm kiếm tên phim...");
+        txtSearch.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+        // GẮN SỰ KIỆN GÕ PHÍM ĐẾN ĐÂU, LỌC ĐẾN ĐÓ
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) { filterTable(); }
+            @Override
+            public void removeUpdate(DocumentEvent e) { filterTable(); }
+            @Override
+            public void changedUpdate(DocumentEvent e) { filterTable(); }
+        });
+
+
+
         JButton btnDelete = new JButton("Xóa phim");
         btnDelete.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnDelete.setBackground(new Color(220, 80, 80));
@@ -64,6 +85,7 @@ public class MovieManagementPanel extends JPanel {
 
         btnSync.addActionListener(e -> syncMoviesFromTMDB());
 
+        actionPanel.add(txtSearch);
         actionPanel.add(btnDelete);
         actionPanel.add(btnRefresh);
         actionPanel.add(btnSync);
@@ -87,6 +109,8 @@ public class MovieManagementPanel extends JPanel {
         };
 
         movieTable = new JTable(tableModel);
+        rowSorter = new TableRowSorter<>(tableModel);
+        movieTable.setRowSorter(rowSorter);
         movieTable.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         movieTable.setRowHeight(35);
         movieTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -212,6 +236,14 @@ public class MovieManagementPanel extends JPanel {
                     }
                 }
             }.execute();
+        }
+    }
+    private void filterTable() {
+        String text = txtSearch.getText().trim();
+        if (text.length() == 0) {
+            rowSorter.setRowFilter(null);
+        } else {
+            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 2));
         }
     }
 }
