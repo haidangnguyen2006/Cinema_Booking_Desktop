@@ -37,18 +37,14 @@ public class ShowTimeManagementPanel extends JPanel {
         setBackground(new Color(245, 246, 250));
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Tiêu đề
         JLabel lblTitle = new JLabel("Quản lý Lịch Chiếu");
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 28));
         add(lblTitle, BorderLayout.NORTH);
 
-        // --- BÊN TRÁI: FORM THÊM MỚI ---
         add(createFormPanel(), BorderLayout.WEST);
 
-        // --- BÊN PHẢI: BẢNG DANH SÁCH ---
         add(createTablePanel(), BorderLayout.CENTER);
 
-        // Tải dữ liệu ban đầu
         loadFormOptions();
         loadTableData();
     }
@@ -116,7 +112,6 @@ public class ShowTimeManagementPanel extends JPanel {
         gbc.insets = new Insets(20, 10, 10, 10);
         formPanel.add(btnAdd, gbc);
 
-        // Đẩy các component lên trên cùng
         gbc.gridy = 11; gbc.weighty = 1.0;
         formPanel.add(Box.createVerticalGlue(), gbc);
 
@@ -152,9 +147,7 @@ public class ShowTimeManagementPanel extends JPanel {
         return panel;
     }
 
-    // ==========================================
     // CÁC HÀM XỬ LÝ LÔ-GIC (TẢI DỮ LIỆU & LƯU)
-    // ==========================================
     private void loadFormOptions() {
         try {
             List<Movie> movies = movieDAO.getAllMovies();
@@ -187,7 +180,7 @@ public class ShowTimeManagementPanel extends JPanel {
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy - HH:mm");
                     for (Object[] row : get()) {
                         Timestamp ts = (Timestamp) row[3];
-                        row[3] = sdf.format(ts); // Format lại giờ cho đẹp
+                        row[3] = sdf.format(ts);
 
                         double price = (double) row[4];
                         row[4] = String.format("%,.0f đ", price);

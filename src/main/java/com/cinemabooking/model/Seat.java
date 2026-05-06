@@ -7,9 +7,7 @@ public class Seat {
     private String rowChar;
     private int seatNumber;
     private String seatType;
-    private boolean isSold; // TRẠNG THÁI QUAN TRỌNG: Check xem vé đã bán chưa
-
-    // Getters & Setters
+    private boolean isSold;
 
     public int getRoomId() {
         return roomId;

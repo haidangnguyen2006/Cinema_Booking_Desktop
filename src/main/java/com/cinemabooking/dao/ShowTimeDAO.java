@@ -2,7 +2,7 @@
 package com.cinemabooking.dao;
 
 import com.cinemabooking.model.ShowTime;
-import com.cinemabooking.utils.DatabaseConnection;
+import com.cinemabooking.connectdb.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,17 +72,14 @@ public class ShowTimeDAO {
         return list;
     }
 
-    // Kiểm tra phòng chiếu có bị trùng giờ?
     public boolean isRoomAvailable(int roomId, Timestamp startTime) throws SQLException {
-        // DATEDIFF(MINUTE, ...): Đếm số phút chênh lệch giữa 2 giờ chiếu.
-        // ABS(...): Lấy giá trị tuyệt đối.
         String sql = "SELECT 1 FROM ShowTimes WHERE RoomID = ? AND ABS(DATEDIFF(MINUTE, StartTime, ?)) < 120";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, roomId);
             stmt.setTimestamp(2, startTime);
             try (ResultSet rs = stmt.executeQuery()) {
-                return !rs.next(); // Trả về TRUE nếu Phòng trống
+                return !rs.next();
             }
         }
     }

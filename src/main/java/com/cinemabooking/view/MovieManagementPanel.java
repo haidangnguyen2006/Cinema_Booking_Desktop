@@ -58,7 +58,7 @@ public class MovieManagementPanel extends JPanel {
 
         JButton btnSync = new JButton("ĐỒNG BỘ TMDB");
         btnSync.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnSync.setBackground(new Color(242, 194, 62)); // Vàng đặc trưng
+        btnSync.setBackground(new Color(242, 194, 62));
         btnSync.setFocusPainted(false);
         btnSync.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -78,7 +78,6 @@ public class MovieManagementPanel extends JPanel {
         tablePanel.setBackground(Color.WHITE);
         tablePanel.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220)));
 
-        // Khởi tạo Model cho Bảng
         String[] columns = {"ID", "TMDB ID", "Tên phim", "Ngày phát hành", "Thời lượng (Phút)", "Thể loại", "Rating"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -105,8 +104,7 @@ public class MovieManagementPanel extends JPanel {
     }
 
     
-    // HÀM TẢI DỮ LIỆU TỪ DATABASE LÊN BẢNG
-    
+
     private void loadMovieData() {
         new SwingWorker<List<Movie>, Void>() {
             @Override
@@ -142,8 +140,7 @@ public class MovieManagementPanel extends JPanel {
     }
 
     
-    // HÀM ĐỒNG BỘ API TMDB VỚI THANH LOADING
-    
+
     private void syncMoviesFromTMDB() {
         JDialog loadingDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Đang xử lý", true);
         JPanel panel = new JPanel(new BorderLayout(10, 10));
@@ -156,7 +153,6 @@ public class MovieManagementPanel extends JPanel {
         loadingDialog.pack();
         loadingDialog.setLocationRelativeTo(this);
 
-        // Chạy Background Task
         SwingWorker<Void, Void> worker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() throws Exception {
@@ -181,18 +177,15 @@ public class MovieManagementPanel extends JPanel {
         loadingDialog.setVisible(true);
     }
     private void deleteSelectedMovie() {
-        // 1. Kiểm tra xem người dùng đã chọn dòng nào trên bảng chưa
         int selectedRow = movieTable.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Vui lòng click chọn một bộ phim trên bảng để xóa!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // 2. Lấy ID và Tên phim từ dòng đang chọn
         int movieId = (int) tableModel.getValueAt(selectedRow, 0);
         String movieTitle = (String) tableModel.getValueAt(selectedRow, 2);
 
-        // 3. Hộp thoại xác nhận
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc chắn muốn xóa bộ phim: '" + movieTitle + "' khỏi hệ thống?\nHành động này không thể hoàn tác!",
                 "Xác nhận xóa",

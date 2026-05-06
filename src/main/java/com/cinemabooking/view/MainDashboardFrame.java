@@ -29,10 +29,8 @@ public class MainDashboardFrame extends JFrame {
 
     private void initComponents() {
 
-        // Thêm Header
         add(createHeaderPanel(), BorderLayout.NORTH);
 
-        // KHỞI TẠO CARDLAYOUT CHO  CENTER
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
@@ -40,6 +38,7 @@ public class MainDashboardFrame extends JFrame {
         cardPanel.add(new POSPanel(), "VIEW_POS");
         cardPanel.add(new MovieManagementPanel(), "VIEW_MOVIE");
         cardPanel.add(new ShowTimeManagementPanel(), "VIEW_SHOWTIME");
+        cardPanel.add(new StatisticPanel(), "VIEW_STATISTIC");
         add(cardPanel, BorderLayout.CENTER);
 
         cardLayout.show(cardPanel, "VIEW_HOME");
@@ -52,7 +51,7 @@ public class MainDashboardFrame extends JFrame {
         headerPanel.setPreferredSize(new Dimension(getWidth(), 60));
         headerPanel.setBorder(new EmptyBorder(0, 20, 0, 20));
 
-        //Cụm Logo & Menu (Bên trái) ---
+        //Cụm Logo & Menu (Bên trái)
         JPanel leftNav = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         leftNav.setOpaque(false);
         ImageIcon iuhLogo = new ImageIcon(getClass().getResource("/icons/iuh-logo.png"));
@@ -85,7 +84,7 @@ public class MainDashboardFrame extends JFrame {
         leftNav.add(lblIcon);
         leftNav.add(lblLogo);
 
-        String[] menus = {"Bán vé", "Phim", "Lịch chiếu"};
+        String[] menus = {"Bán vé", "Phim", "Lịch chiếu", "Thống kê"};
         for (String menu : menus) {
             JButton btnMenu = new JButton(menu);
             btnMenu.setFont(new Font("Segoe UI", Font.PLAIN, 15));
@@ -111,13 +110,15 @@ public class MainDashboardFrame extends JFrame {
                     case "Lịch chiếu":
                         cardLayout.show(cardPanel, "VIEW_SHOWTIME");
                         break;
+                    case "Thống kê":
+                        cardLayout.show(cardPanel, "VIEW_STATISTIC");
+                        break;
                 }
             });
 
             leftNav.add(btnMenu);
         }
 
-        //Cụm User & Đăng xuất (Bên phải)
         JPanel rightNav = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
         rightNav.setOpaque(false);
 
@@ -188,7 +189,6 @@ public class MainDashboardFrame extends JFrame {
 
         mainPanel.add(greetingPanel, BorderLayout.NORTH);
 
-        //Lưới các thẻ chức năng
         JPanel gridPanel = new JPanel(new GridLayout(2, 2, 40, 40));
         gridPanel.setOpaque(false);
 
@@ -198,6 +198,8 @@ public class MainDashboardFrame extends JFrame {
                 "Quản lý và thông tin phim", new ImageIcon(getClass().getResource("/icons/film-96.png")));
         DashboardCard cardLichChieu = new DashboardCard("Lịch chiếu",
                 "Sắp xếp và quản lý lịch chiếu", new ImageIcon(getClass().getResource("/icons/calendar-100.png")));
+        DashboardCard cardThongKe = new DashboardCard("Thống kê",
+                "Thống kê doanh thu và phim", new ImageIcon(getClass().getResource("/icons/statistic-96.png")));
         // Click event on card
         cardBanVe.addMouseListener(new MouseAdapter() {
             @Override
@@ -219,9 +221,16 @@ public class MainDashboardFrame extends JFrame {
                 cardLayout.show(cardPanel, "VIEW_SHOWTIME");
             }
         });
+        cardThongKe.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                cardLayout.show(cardPanel,"VIEW_STATISTIC");
+            }
+        });
         gridPanel.add(cardBanVe);
         gridPanel.add(cardPhim);
         gridPanel.add(cardLichChieu);
+        gridPanel.add(cardThongKe);
 
         JPanel centerWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT));
         centerWrapper.setOpaque(false);
@@ -252,7 +261,6 @@ public class MainDashboardFrame extends JFrame {
                 public void mouseExited(MouseEvent e) { setBorder(new EmptyBorder(25, 30, 25, 30)); }
             });
 
-            //1.  Icon (Bên trái) ---
             JLabel lblIcon = new JLabel();
             try {
                 Image img = iconSymbol.getImage();
@@ -268,7 +276,6 @@ public class MainDashboardFrame extends JFrame {
             }
             add(lblIcon, BorderLayout.WEST);
 
-            //2.  Chữ (Bên phải) ---
             JPanel textPanel = new JPanel();
             textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
             textPanel.setOpaque(false);

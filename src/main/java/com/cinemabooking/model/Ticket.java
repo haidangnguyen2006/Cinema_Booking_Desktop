@@ -6,7 +6,7 @@ public class Ticket {
     private int showTimeId;
     private int seatId;
     private double price;
-    private String status; // 'Confirmed' hoặc 'Cancelled'
+    private String status; // 'Confirmed', 'Cancelled'
 
     public Ticket() {
     }

@@ -1,7 +1,7 @@
 package com.cinemabooking.dao;
 
 import com.cinemabooking.model.Seat;
-import com.cinemabooking.utils.DatabaseConnection;
+import com.cinemabooking.connectdb.DatabaseConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import java.util.List;
 public class SeatDAO {
     public List<Seat> getSeatsForShowTime(int roomId, int showTimeId) throws SQLException {
         List<Seat> list = new ArrayList<>();
-        // Tuyệt chiêu LEFT JOIN để check ghế trống hay đã bán
         String sql = "SELECT s.*, " +
                 "CASE WHEN t.TicketID IS NOT NULL AND t.Status = 'Confirmed' THEN 1 ELSE 0 END AS IsSold " +
                 "FROM Seats s " +

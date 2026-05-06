@@ -2,7 +2,7 @@ package com.cinemabooking.dao;
 
 import com.cinemabooking.model.Invoice;
 import com.cinemabooking.model.Ticket;
-import com.cinemabooking.utils.DatabaseConnection;
+import com.cinemabooking.connectdb.DatabaseConnection;
 
 import java.sql.*;
 import java.util.List;
@@ -11,7 +11,6 @@ public class InvoiceDAO {
     public boolean createInvoiceTransaction(Invoice invoice, List<Ticket> tickets, boolean isDiscountApplied) throws SQLException {
         Connection conn = DatabaseConnection.getConnection();
 
-        // 1. Tắt AutoCommit
         conn.setAutoCommit(false);
 
         String sqlInsertInvoice = "INSERT INTO Invoices (StaffID, CustomerPhone, TotalAmount, DiscountAmount, FinalAmount, EarnedPoints) VALUES (?, ?, ?, ?, ?, ?)";
@@ -22,7 +21,6 @@ public class InvoiceDAO {
              PreparedStatement stmtTicket = conn.prepareStatement(sqlInsertTicket);
              PreparedStatement stmtCustomer = conn.prepareStatement(sqlUpdateCustomer)) {
 
-            // BƯỚC 1: LƯU HÓA ĐƠN
             stmtInvoice.setString(1, invoice.getStaffId());
             if (invoice.getCustomerPhone() != null && !invoice.getCustomerPhone().isEmpty()) {
                 stmtInvoice.setString(2, invoice.getCustomerPhone());
@@ -36,7 +34,6 @@ public class InvoiceDAO {
 
             stmtInvoice.executeUpdate();
 
-            // Lấy InvoiceID vừa được SQL Server tự sinh ra
             ResultSet rs = stmtInvoice.getGeneratedKeys();
             int generatedInvoiceId = 0;
             if (rs.next()) {
@@ -45,7 +42,6 @@ public class InvoiceDAO {
                 throw new SQLException("Không thể lấy ID hóa đơn vừa tạo!");
             }
 
-            // BƯỚC 2: LƯU DANH SÁCH VÉ
             for (Ticket t : tickets) {
                 stmtTicket.setInt(1, generatedInvoiceId);
                 stmtTicket.setInt(2, t.getShowTimeId());
@@ -55,7 +51,6 @@ public class InvoiceDAO {
             }
             stmtTicket.executeBatch();
 
-            // BƯỚC 3: CẬP NHẬT ĐIỂM KHÁCH HÀNG
             if (invoice.getCustomerPhone() != null && !invoice.getCustomerPhone().isEmpty()) {
                 int pointsToDeduct = isDiscountApplied ? 200 : 0;
                 stmtCustomer.setInt(1, pointsToDeduct);
@@ -64,7 +59,6 @@ public class InvoiceDAO {
                 stmtCustomer.executeUpdate();
             }
 
-            // BƯỚC 4: XÁC NHẬN THÀNH CÔNG
             conn.commit();
             return true;
 

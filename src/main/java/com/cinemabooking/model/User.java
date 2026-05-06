@@ -9,7 +9,6 @@ public class User {
     private String fullName;
     private Role role;
 
-    // Constructors
     public User() {}
 
     public User(String userId, String username, String password, String fullName, String role) {
@@ -20,7 +19,6 @@ public class User {
         setRole(role);
     }
 
-    // Getters and Setters
     public String getUserId() { return userId; }
     public void setUserId(String userId) {
         this.userId = userId;

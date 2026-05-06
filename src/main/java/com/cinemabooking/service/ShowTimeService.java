@@ -23,7 +23,7 @@ public class ShowTimeService {
         return showTimeDAO.getShowTimesByMovie(movieId);
     }
 
-    // Lấy sơ đồ ghế (kèm trạng thái đã bán/trống) của 1 lịch chiếu
+    // Lấy sơ đồ ghế kèm trạng thái của 1 lịch chiếu
     public List<Seat> getSeatsForShowTime(int roomId, int showTimeId) throws SQLException {
         return seatDAO.getSeatsForShowTime(roomId, showTimeId);
     }

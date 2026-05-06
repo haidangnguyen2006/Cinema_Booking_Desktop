@@ -1,7 +1,7 @@
 package com.cinemabooking.dao;
 
 import com.cinemabooking.model.Customer;
-import com.cinemabooking.utils.DatabaseConnection;
+import com.cinemabooking.connectdb.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

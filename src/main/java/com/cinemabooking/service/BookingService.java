@@ -46,7 +46,6 @@ public class BookingService {
         double finalAmount = totalAmount;
         boolean isDiscountApplied = false;
 
-        // 4. Xử lý Khách hàng thành viên & Điểm
         if (customer != null) {
             invoice.setCustomerPhone(customer.getPhone());
 

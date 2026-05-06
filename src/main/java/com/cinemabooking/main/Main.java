@@ -1,7 +1,6 @@
 package com.cinemabooking.main;
 
 import com.cinemabooking.service.TMDBApiService;
-import com.cinemabooking.utils.DatabaseConnection;
 import com.cinemabooking.view.LoginFrame;
 import com.formdev.flatlaf.FlatLightLaf;
 
