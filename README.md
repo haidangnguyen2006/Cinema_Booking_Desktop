@@ -20,7 +20,8 @@ Tổng quan kiến trúc
 - `com.cinemabooking.dao` — lớp truy cập dữ liệu (DAO) chịu trách nhiệm đọc/ghi dữ liệu vào cơ sở dữ liệu.
 - `com.cinemabooking.service` — business logic (đăng nhập, booking, truy vấn lịch chiếu, gọi API TMDB...).
 - `com.cinemabooking.view` — các Frame/Panel Swing chịu trách nhiệm hiển thị giao diện (ví dụ: `LoginFrame`, `MainDashboardFrame`, `POSPanel`, `TicketDialog`).
-- `com.cinemabooking.utils` — tiện ích chung (ví dụ: `DatabaseConnection`, `ConfigLoader`, `SessionManager`).
+- `com.cinemabooking.connectdb` — kết nối CSDL (ví dụ: `DatabaseConnection`).
+- `com.cinemabooking.utils` — tiện ích chung (ví dụ: `ConfigLoader`, `SessionManager`).
 
 Luồng chính
 1. Ứng dụng khởi động bằng `com.cinemabooking.main.Main` và hiển thị `LoginFrame`.
@@ -65,8 +66,10 @@ Hướng dẫn phát triển & đóng góp
 - Trước khi gửi pull request: đảm bảo build thành công (`mvn -DskipTests package`) và mô tả rõ thay đổi.
 
 Tài nguyên bổ sung
-- Script mẫu: `src/main/resources/sql/insertShowTimeForMovie.sql`.
-- Hình ảnh/icon UI: `src/main/resources/icons/`, `src/main/resources/images/`.
+ - Script mẫu: `src/main/resources/sql/insertShowTimeForMovie.sql`.
+ - Hình ảnh/icon UI: `src/main/resources/icons/`, `src/main/resources/images/`.
+ - [Hướng dẫn chạy dự án / cấu hình DB](Doc/guideline-run-project.md)
+ - [Class diagram (Mermaid)](Doc/class-diagram.md)
 
 Bảo mật & lưu ý
 - Không lưu trữ mật khẩu dạng plain text trong mã nguồn; hiện nay `config.properties` chỉ chứa cấu hình DB — hãy dùng cơ chế an toàn hơn khi đưa vào môi trường thật (environment variables, vault, ...).

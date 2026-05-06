@@ -1,0 +1,129 @@
+# Class Diagram (Mermaid)
+
+Dưới đây là sơ đồ lớp (class diagram) của dự án CinemaTicket thể hiện các lớp chính, mối quan hệ giữa DAO, Service, Model và View. Bạn có thể mở file này trong GitHub/GitLab để render Mermaid.
+
+```mermaid
+classDiagram
+    direction LR
+
+    %% Core: DB connection
+    class DatabaseConnection {
+      +static Connection getConnection()
+    }
+
+    %% Models
+    class Movie {
+      +int movieId
+      +String title
+      +String posterUrl
+      +String description
+    }
+    class ShowTime {
+      +int showTimeId
+      +int movieId
+      +int roomId
+      +Time startTime
+      +double ticketPrice
+    }
+    class Seat {
+      +int seatId
+      +String seatName
+      +boolean sold
+    }
+    class Room {
+      +int roomId
+      +String name
+      +int capacity
+    }
+    class Customer {
+      +int customerId
+      +String fullName
+      +String phone
+      +int points
+    }
+    class Ticket {
+      +int ticketId
+      +int showTimeId
+      +int seatId
+      +double price
+    }
+    class Invoice {
+      +int invoiceId
+      +List~Ticket~ tickets
+      +double total
+    }
+    class User {
+      +int userId
+      +String username
+      +String password
+      +Role role
+    }
+
+    %% DAOs
+    class MovieDAO
+    class ShowTimeDAO
+    class SeatDAO
+    class RoomDAO
+    class CustomerDAO
+    class InvoiceDAO
+    class UserDAO
+    class StatisticDAO
+
+    %% Services
+    class BookingService
+    class ShowTimeService
+    class CustomerService
+    class AuthService
+    class TMDBApiService
+
+    %% Utils & UI
+    class ConfigLoader
+    class SessionManager
+    class LoginFrame
+    class MainDashboardFrame
+    class POSPanel
+    class TicketDialog
+
+    %% Relationships: DAOs depend on DatabaseConnection
+    DatabaseConnection <|-- MovieDAO
+    DatabaseConnection <|-- ShowTimeDAO
+    DatabaseConnection <|-- SeatDAO
+    DatabaseConnection <|-- RoomDAO
+    DatabaseConnection <|-- CustomerDAO
+    DatabaseConnection <|-- InvoiceDAO
+    DatabaseConnection <|-- UserDAO
+    DatabaseConnection <|-- StatisticDAO
+
+    %% DAOs -> Models
+    MovieDAO --> Movie
+    ShowTimeDAO --> ShowTime
+    SeatDAO --> Seat
+    RoomDAO --> Room
+    CustomerDAO --> Customer
+    InvoiceDAO --> Invoice
+    UserDAO --> User
+
+    %% Services -> DAOs
+    ShowTimeService --> ShowTimeDAO
+    ShowTimeService --> SeatDAO
+    BookingService --> ShowTimeDAO
+    BookingService --> SeatDAO
+    BookingService --> InvoiceDAO
+    BookingService --> CustomerDAO
+    CustomerService --> CustomerDAO
+    AuthService --> UserDAO
+    TMDBApiService --> MovieDAO
+
+    %% UI -> Services
+    POSPanel --> ShowTimeService
+    POSPanel --> BookingService
+    POSPanel --> CustomerService
+    POSPanel --> TicketDialog
+    LoginFrame --> AuthService
+    MainDashboardFrame --> POSPanel
+
+    %% Utils usage
+    ConfigLoader --> TMDBApiService
+    SessionManager --> LoginFrame
+```
+
