@@ -8,73 +8,115 @@ classDiagram
 
     %% Core: DB connection
     class DatabaseConnection {
+      -String SERVER_NAME
+      -String DATABASE_NAME
+      -String USERNAME
+      -String PASSWORD
+      -String PORT
       +static Connection getConnection()
     }
 
     %% Models
     class Movie {
-      +int movieId
-      +String title
-      +String posterUrl
-      +String description
+      -int movieId
+      -String title
+      -String posterUrl
+      -String description
     }
     class ShowTime {
-      +int showTimeId
-      +int movieId
-      +int roomId
-      +Time startTime
-      +double ticketPrice
+      -int showTimeId
+      -int movieId
+      -int roomId
+      -Time startTime
+      -double ticketPrice
     }
     class Seat {
-      +int seatId
-      +String seatName
-      +boolean sold
+      -int seatId
+      -String seatName
+      -boolean sold
     }
     class Room {
-      +int roomId
-      +String name
-      +int capacity
+      -int roomId
+      -String name
+      -int capacity
     }
     class Customer {
-      +int customerId
-      +String fullName
-      +String phone
-      +int points
+      -int customerId
+      -String fullName
+      -String phone
+      -int points
     }
     class Ticket {
-      +int ticketId
-      +int showTimeId
-      +int seatId
-      +double price
+      -int ticketId
+      -int showTimeId
+      -int seatId
+      -double price
     }
     class Invoice {
-      +int invoiceId
-      +List~Ticket~ tickets
-      +double total
+      -int invoiceId
+      -List~Ticket~ tickets
+      -double total
     }
     class User {
-      +int userId
-      +String username
-      +String password
-      +Role role
+      -int userId
+      -String username
+      -String password
+      -Role role
     }
 
     %% DAOs
-    class MovieDAO
-    class ShowTimeDAO
-    class SeatDAO
-    class RoomDAO
-    class CustomerDAO
-    class InvoiceDAO
-    class UserDAO
-    class StatisticDAO
+    class MovieDAO {
+      +List~Movie~ getAllMovies()
+      +Movie getMovieById(int id)
+      +void insertMovie(Movie m)
+      +void updateMovie(Movie m)
+      +void deleteMovie(int id)
+    }
+    class ShowTimeDAO {
+      +List~ShowTime~ getShowTimesByMovieAndDate(int movieId, Date date)
+      +ShowTime getShowTimeById(int id)
+    }
+    class SeatDAO {
+      +List~Seat~ getSeatsByRoom(int roomId)
+      +void markSeatSold(int seatId)
+    }
+    class RoomDAO {
+      +Room getRoomById(int id)
+    }
+    class CustomerDAO {
+      +Customer findByPhone(String phone)
+      +void insertCustomer(Customer c)
+    }
+    class InvoiceDAO {
+      +void createInvoice(Invoice inv)
+    }
+    class UserDAO {
+      +User findByUsername(String username)
+    }
+    class StatisticDAO {
+      +Map~String,Object~ getMonthlyStats(int month, int year)
+    }
 
     %% Services
-    class BookingService
-    class ShowTimeService
-    class CustomerService
-    class AuthService
-    class TMDBApiService
+    class BookingService {
+      +boolean processPayment(ShowTime st, List~Seat~ seats, Customer c)
+      +Invoice createInvoice(ShowTime st, List~Seat~ seats, Customer c)
+    }
+    class ShowTimeService {
+      +List~ShowTime~ getShowTimesByMovieAndDate(int movieId, Date date)
+      +List~Seat~ getSeatsForShowTime(int roomId)
+    }
+    class CustomerService {
+      +Customer findCustomerByPhone(String phone)
+      +Customer registerNewCustomer(String phone, String name)
+    }
+    class AuthService {
+      +User authenticate(String username, String password)
+    }
+    class TMDBApiService {
+      +List~Movie~ fetchNowPlaying()
+      +Movie fetchMovieDetails(int movieId)
+    }
 
     %% Utils & UI
     class ConfigLoader
