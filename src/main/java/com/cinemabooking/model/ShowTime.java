@@ -4,8 +4,8 @@ import java.sql.Timestamp;
 
 public class ShowTime {
     private int showTimeId;
-    private int movieId;
-    private int roomId;
+    private Movie movie;
+    private Room room;
     private Timestamp startTime;
     private double ticketPrice;
 
@@ -17,20 +17,20 @@ public class ShowTime {
         this.showTimeId = showTimeId;
     }
 
-    public int getMovieId() {
-        return movieId;
+    public Movie getMovie() {
+        return movie;
     }
 
-    public void setMovieId(int movieId) {
-        this.movieId = movieId;
+    public void setMovie(Movie movie) {
+        this.movie = movie;
     }
 
-    public int getRoomId() {
-        return roomId;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setRoomId(int roomId) {
-        this.roomId = roomId;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public Timestamp getStartTime() {

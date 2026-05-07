@@ -2,19 +2,19 @@ package com.cinemabooking.model;
 
 public class Ticket {
     private int ticketId;
-    private int invoiceId;
-    private int showTimeId;
-    private int seatId;
+    private Invoice invoice;
+    private ShowTime showTime;
+    private Seat seat;
     private double price;
     private String status; // 'Confirmed', 'Cancelled'
 
     public Ticket() {
     }
-    public Ticket(int ticketId, int invoiceId, int showTimeId, int seatId, double price, String status) {
+    public Ticket(int ticketId, Invoice invoice, ShowTime showTime, Seat seat, double price, String status) {
         this.ticketId = ticketId;
-        this.invoiceId = invoiceId;
-        this.showTimeId = showTimeId;
-        this.seatId = seatId;
+        this.invoice = invoice;
+        this.showTime = showTime;
+        this.seat = seat;
         this.price = price;
         this.status = status;
     }
@@ -27,28 +27,28 @@ public class Ticket {
         this.ticketId = ticketId;
     }
 
-    public int getInvoiceId() {
-        return invoiceId;
+    public Invoice getInvoice() {
+        return invoice;
     }
 
-    public void setInvoiceId(int invoiceId) {
-        this.invoiceId = invoiceId;
+    public void setInvoice(Invoice invoice) {
+        this.invoice = invoice;
     }
 
-    public int getShowTimeId() {
-        return showTimeId;
+    public ShowTime getShowTime() {
+        return showTime;
     }
 
-    public void setShowTimeId(int showTimeId) {
-        this.showTimeId = showTimeId;
+    public void setShowTime(ShowTime showTime) {
+        this.showTime = showTime;
     }
 
-    public int getSeatId() {
-        return seatId;
+    public Seat getSeat() {
+        return seat;
     }
 
-    public void setSeatId(int seatId) {
-        this.seatId = seatId;
+    public void setSeat(Seat seat) {
+        this.seat = seat;
     }
 
     public double getPrice() {
