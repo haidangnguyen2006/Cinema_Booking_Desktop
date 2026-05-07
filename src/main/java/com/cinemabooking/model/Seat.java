@@ -3,18 +3,18 @@ package com.cinemabooking.model;
 
 public class Seat {
     private int seatId;
-    private int roomId;
+    private Room room;
     private String rowChar;
     private int seatNumber;
     private String seatType;
     private boolean isSold;
 
-    public int getRoomId() {
-        return roomId;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setRoomId(int roomId) {
-        this.roomId = roomId;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public String getSeatType() {

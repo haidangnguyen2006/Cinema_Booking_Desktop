@@ -1,5 +1,6 @@
 package com.cinemabooking.dao;
 
+import com.cinemabooking.model.Room;
 import com.cinemabooking.model.Seat;
 import com.cinemabooking.connectdb.DatabaseConnection;
 import java.sql.*;
@@ -24,7 +25,12 @@ public class SeatDAO {
                 while (rs.next()) {
                     Seat seat = new Seat();
                     seat.setSeatId(rs.getInt("SeatID"));
-                    seat.setRoomId(rs.getInt("RoomID"));
+                    
+                    // Set Room object
+                    Room room = new Room();
+                    room.setRoomId(rs.getInt("RoomID"));
+                    seat.setRoom(room);
+                    
                     seat.setRowChar(rs.getString("RowChar"));
                     seat.setSeatNumber(rs.getInt("SeatNumber"));
                     seat.setSeatType(rs.getString("SeatType"));

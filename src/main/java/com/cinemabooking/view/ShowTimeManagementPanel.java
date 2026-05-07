@@ -4,6 +4,7 @@ import com.cinemabooking.dao.MovieDAO;
 import com.cinemabooking.dao.RoomDAO;
 import com.cinemabooking.dao.ShowTimeDAO;
 import com.cinemabooking.model.Movie;
+import com.cinemabooking.model.Room;
 import com.cinemabooking.model.ShowTime;
 
 import javax.swing.*;
@@ -238,8 +239,17 @@ public class ShowTimeManagementPanel extends JPanel {
 
             // Lưu xuống DB
             ShowTime st = new ShowTime();
-            st.setMovieId(selectedMovie.id);
-            st.setRoomId(selectedRoom.id);
+            
+            // Set Movie object
+            Movie movie = new Movie();
+            movie.setMovieId(selectedMovie.id);
+            st.setMovie(movie);
+            
+            // Set Room object
+            Room room = new Room();
+            room.setRoomId(selectedRoom.id);
+            st.setRoom(room);
+            
             st.setStartTime(startTime);
             st.setTicketPrice(price);
 

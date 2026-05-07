@@ -1,6 +1,8 @@
 // --- ShowTimeDAO.java ---
 package com.cinemabooking.dao;
 
+import com.cinemabooking.model.Movie;
+import com.cinemabooking.model.Room;
 import com.cinemabooking.model.ShowTime;
 import com.cinemabooking.connectdb.DatabaseConnection;
 import java.sql.*;
@@ -18,8 +20,17 @@ public class ShowTimeDAO {
                 while (rs.next()) {
                     ShowTime st = new ShowTime();
                     st.setShowTimeId(rs.getInt("ShowTimeID"));
-                    st.setMovieId(rs.getInt("MovieID"));
-                    st.setRoomId(rs.getInt("RoomID"));
+                    
+                    // Set Movie object
+                    Movie movie = new Movie();
+                    movie.setMovieId(rs.getInt("MovieID"));
+                    st.setMovie(movie);
+                    
+                    // Set Room object
+                    Room room = new Room();
+                    room.setRoomId(rs.getInt("RoomID"));
+                    st.setRoom(room);
+                    
                     st.setStartTime(rs.getTimestamp("StartTime"));
                     st.setTicketPrice(rs.getDouble("TicketPrice"));
                     list.add(st);
@@ -28,6 +39,7 @@ public class ShowTimeDAO {
         }
         return list;
     }
+    
     public List<ShowTime> getShowTimesByMovieAndDate(int movieId, java.sql.Date date) throws SQLException {
         List<ShowTime> list = new ArrayList<>();
         String sql = "SELECT * FROM ShowTimes WHERE MovieID = ? AND CAST(StartTime AS DATE) = ? ORDER BY StartTime ASC";
@@ -39,8 +51,17 @@ public class ShowTimeDAO {
                 while (rs.next()) {
                     ShowTime st = new ShowTime();
                     st.setShowTimeId(rs.getInt("ShowTimeID"));
-                    st.setMovieId(rs.getInt("MovieID"));
-                    st.setRoomId(rs.getInt("RoomID"));
+                    
+                    // Set Movie object
+                    Movie movie = new Movie();
+                    movie.setMovieId(rs.getInt("MovieID"));
+                    st.setMovie(movie);
+                    
+                    // Set Room object
+                    Room room = new Room();
+                    room.setRoomId(rs.getInt("RoomID"));
+                    st.setRoom(room);
+                    
                     st.setStartTime(rs.getTimestamp("StartTime"));
                     st.setTicketPrice(rs.getDouble("TicketPrice"));
                     list.add(st);
@@ -89,8 +110,8 @@ public class ShowTimeDAO {
         String sql = "INSERT INTO ShowTimes (MovieID, RoomID, StartTime, TicketPrice) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, st.getMovieId());
-            stmt.setInt(2, st.getRoomId());
+            stmt.setInt(1, st.getMovie().getMovieId());
+            stmt.setInt(2, st.getRoom().getRoomId());
             stmt.setTimestamp(3, st.getStartTime());
             stmt.setDouble(4, st.getTicketPrice());
             return stmt.executeUpdate() > 0;

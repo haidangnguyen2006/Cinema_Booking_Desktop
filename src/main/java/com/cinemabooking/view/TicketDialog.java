@@ -56,7 +56,7 @@ public class TicketDialog extends JDialog {
         detailsPanel.add(createReceiptLine("Phim (Movie):", movieName));
         detailsPanel.add(createReceiptLine("Ngày (Date):", dateStr));
         detailsPanel.add(createReceiptLine("Giờ (Time):", timeStr));
-        detailsPanel.add(createReceiptLine("Phòng (Cinema):", "Room " + showTime.getRoomId()));
+        detailsPanel.add(createReceiptLine("Phòng (Cinema):", "Room " + showTime.getRoom().getRoomId()));
         detailsPanel.add(createReceiptLine("Ghế (Seats):", seatStr));
 
         if (customer != null) {

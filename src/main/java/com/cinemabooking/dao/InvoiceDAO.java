@@ -44,8 +44,8 @@ public class InvoiceDAO {
 
             for (Ticket t : tickets) {
                 stmtTicket.setInt(1, generatedInvoiceId);
-                stmtTicket.setInt(2, t.getShowTimeId());
-                stmtTicket.setInt(3, t.getSeatId());
+                stmtTicket.setInt(2, t.getShowTime().getShowTimeId());
+                stmtTicket.setInt(3, t.getSeat().getSeatId());
                 stmtTicket.setDouble(4, t.getPrice());
                 stmtTicket.addBatch();
             }

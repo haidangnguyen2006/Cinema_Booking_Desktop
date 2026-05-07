@@ -536,7 +536,7 @@ public class POSPanel extends JPanel {
             @Override
             protected List<Seat> doInBackground() throws Exception {
                 // Lấy ghế dựa vào RoomID và ShowTimeID để check vé
-                return showTimeService.getSeatsForShowTime(showTime.getRoomId(), showTime.getShowTimeId());
+                return showTimeService.getSeatsForShowTime(currentShowTime.getRoom().getRoomId(), currentShowTime.getShowTimeId());
             }
 
             @Override

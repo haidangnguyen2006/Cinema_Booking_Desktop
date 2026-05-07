@@ -23,8 +23,8 @@ public class BookingService {
         List<Ticket> tickets = new ArrayList<>();
         for (Seat seat : seats) {
             Ticket ticket = new Ticket();
-            ticket.setShowTimeId(showTime.getShowTimeId());
-            ticket.setSeatId(seat.getSeatId());
+            ticket.setShowTime(showTime);
+            ticket.setSeat(seat);
             ticket.setPrice(showTime.getTicketPrice());
             ticket.setStatus("Confirmed");
             tickets.add(ticket);
